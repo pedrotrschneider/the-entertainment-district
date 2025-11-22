@@ -5,6 +5,7 @@ import Search from './pages/Search';
 import Details from './pages/Details';
 import Settings from './pages/Settings';
 import Discover from './pages/Discover';
+import Downloads from './pages/Downloads';
 import Layout from './components/Layout';
 import { ToastProvider } from './components/Toast';
 import './App.css';
@@ -18,6 +19,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/discover" element={<Discover />} />
+              <Route path="/downloads" element={<Downloads />} />
               <Route path="/search" element={<Search />} />
               <Route path="/media/:type/:id" element={<Details />} />
               <Route path="/settings" element={<Settings />} />

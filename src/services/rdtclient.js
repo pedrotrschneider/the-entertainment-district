@@ -115,6 +115,49 @@ const rdtclient = {
 
             throw error;
         }
+    },
+
+    getTorrents: async () => {
+        try {
+            const { rdtClientUrl } = useSettingsStore.getState();
+
+            if (!rdtClientUrl) throw new Error('RDT Client URL not configured');
+
+            const baseUrl = import.meta.env.DEV
+                ? ''
+                : rdtClientUrl.replace(/\/$/, '');
+
+            const makeRequest = async () => {
+                return await axios.get(
+                    `${baseUrl}/Api/Torrents`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        withCredentials: true
+                    }
+                );
+            };
+
+            try {
+                const response = await makeRequest();
+                return response.data;
+            } catch (error) {
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    console.log('RDT Client unauthorized, attempting to login...');
+                    await rdtclient.authenticate();
+                    const response = await makeRequest();
+                    return response.data;
+                }
+                throw error;
+            }
+        } catch (error) {
+            console.error('Error fetching torrents from RDT Client:', error);
+            if (error.message?.includes('Network Error') || error.code === 'ERR_NETWORK') {
+                throw new Error('CORS Error: Enable CORS in your browser or configure a reverse proxy.');
+            }
+            throw error;
+        }
     }
 };
 

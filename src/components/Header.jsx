@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Settings, Moon, Sun, Compass } from 'lucide-react';
+import { Home, Search, Settings, Moon, Sun, Compass, Download } from 'lucide-react';
 import useSettingsStore from '../store/settingsStore';
 import './Header.css';
 
@@ -29,6 +29,10 @@ const Header = () => {
                     <Link to="/discover" className={`nav-item ${isActive('/discover') ? 'active' : ''}`}>
                         <Compass size={20} />
                         <span>Discover</span>
+                    </Link>
+                    <Link to="/downloads" className={`nav-item ${isActive('/downloads') ? 'active' : ''}`}>
+                        <Download size={20} />
+                        <span>Downloads</span>
                     </Link>
                     <Link to="/search" className={`nav-item ${isActive('/search') ? 'active' : ''}`}>
                         <Search size={20} />
