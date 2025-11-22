@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "The Entertainment District",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,0 +1,21 @@
+meta {
+  name: rdtclient add magnet
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/api/v2/torrents/add
+  body: formUrlEncoded
+  auth: inherit
+}
+
+body:form-urlencoded {
+  urls: magnet:?xt=urn:btih:86f93b2baa94e23818e8ffca50e1ba20603a87dd
+  category: Test
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import cinemeta from '../services/cinemeta';
 import torrentio from '../services/torrentio';
+import realdebrid from '../services/realdebrid';
+import rdtclient from '../services/rdtclient';
 import StreamList from '../components/StreamList';
 import './Details.css';
 
 const Details = () => {
     const { type, id } = useParams();
+    const navigate = useNavigate();
     const [meta, setMeta] = useState(null);
     const [loading, setLoading] = useState(true);
     const [streams, setStreams] = useState([]);
@@ -15,6 +18,10 @@ const Details = () => {
     // Series state
     const [selectedSeason, setSelectedSeason] = useState(1);
     const [selectedEpisode, setSelectedEpisode] = useState(1);
+
+    // Action state
+    const [processing, setProcessing] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
 
     useEffect(() => {
         const fetchMeta = async () => {
@@ -50,10 +57,54 @@ const Details = () => {
         }
     }, [meta, type, id, selectedSeason, selectedEpisode]);
 
-    const handleStreamSelect = (stream, action) => {
-        console.log('Selected stream:', stream, 'Action:', action);
-        // TODO: Implement actions in Phase 4
-        alert(`Action: ${action}\nStream: ${stream.title || 'Unknown'}`);
+    const handleStreamSelect = async (stream, action) => {
+        if (processing) return;
+        setProcessing(true);
+        setStatusMessage(`Processing ${action}...`);
+
+        try {
+            const magnetLink = stream.url || `magnet:?xt=urn:btih:${stream.infoHash}`;
+
+            if (action === 'download') {
+                await rdtclient.addTorrent(magnetLink);
+                alert('Added to Home Server!');
+            } else if (action === 'debrid') {
+                const added = await realdebrid.addMagnet(magnetLink);
+                await realdebrid.selectFiles(added.id, 'all');
+                alert('Added to Real-Debrid!');
+            } else if (action === 'watch') {
+                setStatusMessage('Adding to Debrid...');
+                const added = await realdebrid.addMagnet(magnetLink);
+
+                setStatusMessage('Selecting files...');
+                await realdebrid.selectFiles(added.id, 'all');
+
+                setStatusMessage('Getting link...');
+                const info = await realdebrid.getTorrentInfo(added.id);
+
+                // Find the largest file or the first video file
+                // Real-Debrid links are in info.links
+                if (info.links && info.links.length > 0) {
+                    setStatusMessage('Unrestricting link...');
+                    const unrestricted = await realdebrid.unrestrictLink(info.links[0]);
+
+                    navigate('/player', {
+                        state: {
+                            streamUrl: unrestricted.download,
+                            title: meta.name
+                        }
+                    });
+                } else {
+                    alert('No links found in torrent.');
+                }
+            }
+        } catch (error) {
+            console.error('Action failed:', error);
+            alert(`Action failed: ${error.message}`);
+        } finally {
+            setProcessing(false);
+            setStatusMessage('');
+        }
     };
 
     if (loading) {
@@ -148,6 +199,15 @@ const Details = () => {
                     </div>
                 </div>
             </div>
+
+            {processing && (
+                <div className="processing-overlay">
+                    <div className="processing-content">
+                        <div className="spinner"></div>
+                        <p>{statusMessage}</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
