@@ -11,11 +11,20 @@ const cinemeta = {
         return cinemeta.getCatalog('series', 'top');
     },
 
-    getCatalog: async (type, id, genre = null) => {
+    getCatalog: async (type, id, genre = null, skip = 0) => {
         try {
             let url = `${BASE_URL}/catalog/${type}/${id}`;
+            const params = [];
+
             if (genre) {
-                url += `/genre=${encodeURIComponent(genre)}`;
+                params.push(`genre=${encodeURIComponent(genre)}`);
+            }
+            if (skip) {
+                params.push(`skip=${skip}`);
+            }
+
+            if (params.length > 0) {
+                url += `/${params.join('&')}`;
             }
             url += '.json';
 

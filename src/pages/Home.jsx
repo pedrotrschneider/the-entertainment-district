@@ -3,54 +3,21 @@ import cinemeta from '../services/cinemeta';
 import trakt from '../services/trakt';
 import useSettingsStore from '../store/settingsStore';
 import MediaGrid from '../components/MediaGrid';
+import CategorySection from '../components/CategorySection';
 import { MediaGridSkeleton } from '../components/LoadingSkeleton';
 import './Home.css';
 
 const Home = () => {
     const { traktAccessToken } = useSettingsStore();
-    const [movies, setMovies] = useState([]);
-    const [series, setSeries] = useState([]);
     const [continueWatching, setContinueWatching] = useState([]);
     const [watchlist, setWatchlist] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [traktLoading, setTraktLoading] = useState(false);
-
-    const [genres, setGenres] = useState({});
-
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     useEffect(() => {
         if (traktAccessToken) {
             fetchTraktData();
         }
     }, [traktAccessToken]);
-
-    const fetchData = async () => {
-        setLoading(true);
-
-        // Fetch trending
-        const [moviesData, seriesData] = await Promise.all([
-            cinemeta.getTrendingMovies(),
-            cinemeta.getTrendingSeries()
-        ]);
-        setMovies(moviesData);
-        setSeries(seriesData);
-
-        // Fetch genres
-        const genreList = ['Action', 'Comedy', 'Horror', 'Romance', 'Sci-Fi'];
-        const genreResults = {};
-
-        // Fetch movies for each genre
-        await Promise.all(genreList.map(async (genre) => {
-            const results = await cinemeta.getCatalog('movie', 'top', genre);
-            genreResults[genre] = results;
-        }));
-
-        setGenres(genreResults);
-        setLoading(false);
-    };
 
     const fetchTraktData = async () => {
         setTraktLoading(true);
@@ -138,6 +105,8 @@ const Home = () => {
         }
     };
 
+    const GENRES = ['Action', 'Comedy', 'Horror', 'Romance', 'Sci-Fi'];
+
     return (
         <div className="home-page">
             <div className="hero-section">
@@ -165,26 +134,27 @@ const Home = () => {
                 </>
             )}
 
-            {loading ? (
-                <>
-                    <MediaGridSkeleton count={12} />
-                    <MediaGridSkeleton count={12} />
-                    <MediaGridSkeleton count={12} />
-                </>
-            ) : (
-                <>
-                    <MediaGrid title="Trending Movies" items={movies} />
-                    <MediaGrid title="Trending Series" items={series} />
+            <CategorySection
+                title="Trending Movies"
+                type="movie"
+                category="top"
+            />
 
-                    {Object.entries(genres).map(([genre, items]) => (
-                        <MediaGrid
-                            key={genre}
-                            title={`${genre} Movies`}
-                            items={items}
-                        />
-                    ))}
-                </>
-            )}
+            <CategorySection
+                title="Trending Series"
+                type="series"
+                category="top"
+            />
+
+            {GENRES.map(genre => (
+                <CategorySection
+                    key={genre}
+                    title={`${genre} Movies`}
+                    type="movie"
+                    category="top"
+                    genre={genre}
+                />
+            ))}
         </div>
     );
 };
