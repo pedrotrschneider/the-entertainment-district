@@ -4,21 +4,25 @@ const BASE_URL = 'https://v3-cinemeta.strem.io';
 
 const cinemeta = {
     getTrendingMovies: async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/catalog/movie/top.json`);
-            return response.data.metas || [];
-        } catch (error) {
-            console.error('Error fetching trending movies:', error);
-            return [];
-        }
+        return cinemeta.getCatalog('movie', 'top');
     },
 
     getTrendingSeries: async () => {
+        return cinemeta.getCatalog('series', 'top');
+    },
+
+    getCatalog: async (type, id, genre = null) => {
         try {
-            const response = await axios.get(`${BASE_URL}/catalog/series/top.json`);
+            let url = `${BASE_URL}/catalog/${type}/${id}`;
+            if (genre) {
+                url += `/genre=${encodeURIComponent(genre)}`;
+            }
+            url += '.json';
+
+            const response = await axios.get(url);
             return response.data.metas || [];
         } catch (error) {
-            console.error('Error fetching trending series:', error);
+            console.error(`Error fetching catalog ${type}/${id} ${genre || ''}:`, error);
             return [];
         }
     },

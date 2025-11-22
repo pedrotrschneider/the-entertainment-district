@@ -17,6 +17,36 @@
     gap: var(--spacing-md);
 }
 
+.grid-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.btn-show-more,
+.btn-show-less {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-show-more:hover,
+.btn-show-less:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
 @media (min-width: 768px) {
     .media-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

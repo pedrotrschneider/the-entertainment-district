@@ -16,60 +16,29 @@ const Settings = () => {
         tmdbApiKey, setTmdbApiKey
     } = useSettingsStore();
 
-    const [rdKey, setRdKey] = useState('');
-    const [rdtUrl, setRdtUrl] = useState('');
-    const [rdtUser, setRdtUser] = useState('');
-    const [rdtPass, setRdtPass] = useState('');
-    const [rdtMoviesPath, setRdtMoviesPath] = useState('');
-    const [rdtShowsPath, setRdtShowsPath] = useState('');
-    const [traktId, setTraktId] = useState('');
-    const [tmdbKey, setTmdbKey] = useState('');
-    const [saved, setSaved] = useState(false);
-
     // Password visibility toggles
     const [showRdKey, setShowRdKey] = useState(false);
     const [showRdtPass, setShowRdtPass] = useState(false);
     const [showTmdbKey, setShowTmdbKey] = useState(false);
 
-    useEffect(() => {
-        setRdKey(realDebridApiKey);
-        setRdtUrl(rdtClientUrl);
-        setRdtUser(rdtClientUsername);
-        setRdtPass(rdtClientPassword);
-        setRdtMoviesPath(rdtClientMoviesPath);
-        setRdtShowsPath(rdtClientShowsPath);
-        setTraktId(traktClientId);
-        setTmdbKey(tmdbApiKey);
-    }, [realDebridApiKey, rdtClientUrl, rdtClientUsername, rdtClientPassword, rdtClientMoviesPath, rdtClientShowsPath, traktClientId, tmdbApiKey]);
-
-    const handleSave = (e) => {
-        e.preventDefault();
-        setRealDebridApiKey(rdKey);
-        setRdtClientUrl(rdtUrl);
-        setRdtClientUsername(rdtUser);
-        setRdtClientPassword(rdtPass);
-        setRdtClientMoviesPath(rdtMoviesPath);
-        setRdtClientShowsPath(rdtShowsPath);
-        setTraktClientId(traktId);
-        setTmdbApiKey(tmdbKey);
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
-    };
-
     return (
         <div className="settings-page">
-            <h1>Settings</h1>
-            <p className="settings-desc">Configure your service connections.</p>
+            <h1 className="page-title">Settings</h1>
 
-            <form onSubmit={handleSave} className="settings-form">
+            <div className="settings-section">
+                <h2 className="section-title">Real-Debrid</h2>
+                <p className="section-desc">
+                    Required for streaming cached torrents. Get your API key from real-debrid.com/apitoken
+                </p>
+
                 <div className="form-group">
-                    <label htmlFor="rdKey">Real-Debrid API Key</label>
+                    <label htmlFor="rdKey">API Key</label>
                     <div className="password-input-wrapper">
                         <input
                             type={showRdKey ? "text" : "password"}
                             id="rdKey"
-                            value={rdKey}
-                            onChange={(e) => setRdKey(e.target.value)}
+                            value={realDebridApiKey}
+                            onChange={(e) => setRealDebridApiKey(e.target.value)}
                             placeholder="Enter your Real-Debrid API Key"
                         />
                         <button
@@ -81,74 +50,76 @@ const Settings = () => {
                             {showRdKey ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-                    <small>You can find this in your Real-Debrid account settings.</small>
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="rdtUrl">RDT Client URL</label>
-                    <input
-                        type="url"
-                        id="rdtUrl"
-                        value={rdtUrl}
-                        onChange={(e) => setRdtUrl(e.target.value)}
-                        placeholder="http://localhost:6500"
-                    />
-                    <small>The URL where your RDT Client is running (or use proxy with http://localhost:6500).</small>
-                </div>
+                <h2 className="section-title">RDT Client (Optional)</h2>
+                <p className="section-desc">
+                    Connect to your home server's RDT Client for downloading content.
+                </p>
 
                 <div className="form-group">
-                    <label htmlFor="rdtUser">RDT Client Username</label>
+                    <label htmlFor="rdtUrl">URL</label>
                     <input
                         type="text"
-                        id="rdtUser"
-                        value={rdtUser}
-                        onChange={(e) => setRdtUser(e.target.value)}
-                        placeholder="admin"
+                        id="rdtUrl"
+                        value={rdtClientUrl}
+                        onChange={(e) => setRdtClientUrl(e.target.value)}
+                        placeholder="http://localhost:6500"
                     />
-                    <small>Your RDT Client login username.</small>
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="rdtPass">RDT Client Password</label>
-                    <div className="password-input-wrapper">
+                <div className="form-row">
+                    <div className="form-group">
+                        <label htmlFor="rdtUser">Username</label>
                         <input
-                            type={showRdtPass ? "text" : "password"}
-                            id="rdtPass"
-                            value={rdtPass}
-                            onChange={(e) => setRdtPass(e.target.value)}
-                            placeholder="Enter your RDT Client password"
+                            type="text"
+                            id="rdtUser"
+                            value={rdtClientUsername}
+                            onChange={(e) => setRdtClientUsername(e.target.value)}
+                            placeholder="Username"
                         />
-                        <button
-                            type="button"
-                            className="toggle-password"
-                            onClick={() => setShowRdtPass(!showRdtPass)}
-                            aria-label="Toggle password visibility"
-                        >
-                            {showRdtPass ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
                     </div>
-                    <small>Your RDT Client login password.</small>
+                    <div className="form-group">
+                        <label htmlFor="rdtPass">Password</label>
+                        <div className="password-input-wrapper">
+                            <input
+                                type={showRdtPass ? "text" : "password"}
+                                id="rdtPass"
+                                value={rdtClientPassword}
+                                onChange={(e) => setRdtClientPassword(e.target.value)}
+                                placeholder="Password"
+                            />
+                            <button
+                                type="button"
+                                className="toggle-password"
+                                onClick={() => setShowRdtPass(!showRdtPass)}
+                                aria-label="Toggle password visibility"
+                            >
+                                {showRdtPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="rdtMoviesPath">Movies Download Folder</label>
+                    <label htmlFor="rdtMoviesPath">Movies Download Path</label>
                     <input
                         type="text"
                         id="rdtMoviesPath"
-                        value={rdtMoviesPath}
-                        onChange={(e) => setRdtMoviesPath(e.target.value)}
+                        value={rdtClientMoviesPath}
+                        onChange={(e) => setRdtClientMoviesPath(e.target.value)}
                         placeholder="Movies"
                     />
                     <small>Folder/category for movie downloads.</small>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="rdtShowsPath">TV Shows Download Folder</label>
+                    <label htmlFor="rdtShowsPath">TV Shows Download Path</label>
                     <input
                         type="text"
                         id="rdtShowsPath"
-                        value={rdtShowsPath}
-                        onChange={(e) => setRdtShowsPath(e.target.value)}
+                        value={rdtClientShowsPath}
+                        onChange={(e) => setRdtClientShowsPath(e.target.value)}
                         placeholder="TV Shows"
                     />
                     <small>Folder/category for TV show downloads.</small>
@@ -173,8 +144,8 @@ const Settings = () => {
                         <input
                             type={showTmdbKey ? "text" : "password"}
                             id="tmdbKey"
-                            value={tmdbKey}
-                            onChange={(e) => setTmdbKey(e.target.value)}
+                            value={tmdbApiKey}
+                            onChange={(e) => setTmdbApiKey(e.target.value)}
                             placeholder="Enter your TMDB API Key"
                         />
                         <button
@@ -207,19 +178,15 @@ const Settings = () => {
                     <input
                         type="text"
                         id="traktId"
-                        value={traktId}
-                        onChange={(e) => setTraktId(e.target.value)}
+                        value={traktClientId}
+                        onChange={(e) => setTraktClientId(e.target.value)}
                         placeholder="Enter your Trakt Client ID"
                     />
                     <small>Get this from trakt.tv/oauth/applications after registering your app.</small>
                 </div>
 
-                <button type="submit" className="btn-primary">
-                    {saved ? 'Saved!' : 'Save Settings'}
-                </button>
-
                 <TraktAuth />
-            </form>
+            </div>
         </div>
     );
 };

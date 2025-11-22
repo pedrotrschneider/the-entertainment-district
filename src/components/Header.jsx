@@ -21,20 +21,20 @@ const Header = () => {
                     <span className="logo-text">The Entertainment District</span>
                 </Link>
 
-                <nav className="nav-links">
-                    <Link to="/" className={`nav-item ${isActive('/') ? 'active' : ''}`}>
-                        <Home size={20} />
-                        <span>Home</span>
+                <div className="nav-links">
+                    <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+                        Home
                     </Link>
-                    <Link to="/search" className={`nav-item ${isActive('/search') ? 'active' : ''}`}>
-                        <Search size={20} />
-                        <span>Search</span>
+                    <Link to="/discover" className={`nav-link ${location.pathname === '/discover' ? 'active' : ''}`}>
+                        Discover
                     </Link>
-                    <Link to="/settings" className={`nav-item ${isActive('/settings') ? 'active' : ''}`}>
-                        <Settings size={20} />
-                        <span>Settings</span>
+                    <Link to="/search" className={`nav-link ${location.pathname === '/search' ? 'active' : ''}`}>
+                        Search
                     </Link>
-                </nav>
+                    <Link to="/settings" className={`nav-link ${location.pathname === '/settings' ? 'active' : ''}`}>
+                        Settings
+                    </Link>
+                </div>
 
                 <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme">
                     {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
