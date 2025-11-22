@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import useSettingsStore from '../store/settingsStore';
-import { Eye, EyeOff, ExternalLink } from 'lucide-react';
+import useServiceStatusStore from '../store/serviceStatusStore';
+import realdebrid from '../services/realdebrid';
+import rdtclient from '../services/rdtclient';
+import tmdb from '../services/tmdb';
+import { Eye, EyeOff, ExternalLink, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { useToast } from '../components/Toast';
 import TraktAuth from '../components/TraktAuth';
 import './Settings.css';
 
 const Settings = () => {
+    const toast = useToast();
     const {
         realDebridApiKey, setRealDebridApiKey,
         rdtClientUrl, setRdtClientUrl,
@@ -16,10 +22,92 @@ const Settings = () => {
         tmdbApiKey, setTmdbApiKey
     } = useSettingsStore();
 
+    const {
+        realDebridStatus, setRealDebridStatus,
+        rdtClientStatus, setRdtClientStatus,
+        traktStatus, setTraktStatus,
+        tmdbStatus, setTmdbStatus
+    } = useServiceStatusStore();
+
     // Password visibility toggles
     const [showRdKey, setShowRdKey] = useState(false);
     const [showRdtPass, setShowRdtPass] = useState(false);
     const [showTmdbKey, setShowTmdbKey] = useState(false);
+    const [showTraktId, setShowTraktId] = useState(false);
+
+    // Test result messages
+    const [rdTestResult, setRdTestResult] = useState(null);
+    const [rdtTestResult, setRdtTestResult] = useState(null);
+    const [traktTestResult, setTraktTestResult] = useState(null);
+    const [tmdbTestResult, setTmdbTestResult] = useState(null);
+
+    const testRealDebrid = async () => {
+        setRealDebridStatus('testing');
+        setRdTestResult(null);
+        const result = await realdebrid.testConnection();
+
+        if (result.success) {
+            setRealDebridStatus('connected');
+            setRdTestResult({ success: true, message: `Connected as ${result.data.username || 'user'}` });
+        } else {
+            setRealDebridStatus('disconnected');
+            setRdTestResult({ success: false, message: result.error });
+        }
+    };
+
+    const testRdtClient = async () => {
+        setRdtClientStatus('testing');
+        setRdtTestResult(null);
+        const result = await rdtclient.testConnection();
+
+        if (result.success) {
+            setRdtClientStatus('connected');
+            setRdtTestResult({ success: true, message: 'Connected successfully' });
+        } else {
+            setRdtClientStatus('disconnected');
+            setRdtTestResult({ success: false, message: result.error });
+        }
+    };
+
+    const testTrakt = async () => {
+        setTraktStatus('testing');
+        setTraktTestResult(null);
+
+        if (traktClientId) {
+            setTraktStatus('connected');
+            setTraktTestResult({ success: true, message: 'Client ID configured' });
+        } else {
+            setTraktStatus('disconnected');
+            setTraktTestResult({ success: false, message: 'Client ID not configured' });
+        }
+    };
+
+    const testTmdb = async () => {
+        setTmdbStatus('testing');
+        setTmdbTestResult(null);
+        const result = await tmdb.testConnection();
+
+        if (result.success) {
+            setTmdbStatus('connected');
+            setTmdbTestResult({ success: true, message: 'API key valid' });
+        } else {
+            setTmdbStatus('disconnected');
+            setTmdbTestResult({ success: false, message: result.error });
+        }
+    };
+
+    const getStatusIcon = (status) => {
+        switch (status) {
+            case 'testing':
+                return <Loader size={16} className="status-icon spinning" />;
+            case 'connected':
+                return <CheckCircle size={16} className="status-icon success" />;
+            case 'disconnected':
+                return <XCircle size={16} className="status-icon error" />;
+            default:
+                return null;
+        }
+    };
 
     return (
         <div className="settings-page">
@@ -49,6 +137,21 @@ const Settings = () => {
                         >
                             {showRdKey ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
+                    </div>
+                    <div className="test-row">
+                        <button
+                            className="btn-test"
+                            onClick={testRealDebrid}
+                            disabled={!realDebridApiKey || realDebridStatus === 'testing'}
+                        >
+                            {getStatusIcon(realDebridStatus)}
+                            Test Connection
+                        </button>
+                        {rdTestResult && (
+                            <span className={`test-result ${rdTestResult.success ? 'success' : 'error'}`}>
+                                {rdTestResult.message}
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -125,6 +228,22 @@ const Settings = () => {
                     <small>Folder/category for TV show downloads.</small>
                 </div>
 
+                <div className="test-row">
+                    <button
+                        className="btn-test"
+                        onClick={testRdtClient}
+                        disabled={!rdtClientUrl || !rdtClientUsername || !rdtClientPassword || rdtClientStatus === 'testing'}
+                    >
+                        {getStatusIcon(rdtClientStatus)}
+                        Test Connection
+                    </button>
+                    {rdtTestResult && (
+                        <span className={`test-result ${rdtTestResult.success ? 'success' : 'error'}`}>
+                            {rdtTestResult.message}
+                        </span>
+                    )}
+                </div>
+
                 <h2 className="section-title">TMDB Integration</h2>
                 <p className="section-desc">
                     Get cast photos and character names from The Movie Database.{' '}
@@ -158,6 +277,21 @@ const Settings = () => {
                         </button>
                     </div>
                     <small>Get this from themoviedb.org/settings/api (free account required).</small>
+                    <div className="test-row">
+                        <button
+                            className="btn-test"
+                            onClick={testTmdb}
+                            disabled={!tmdbApiKey || tmdbStatus === 'testing'}
+                        >
+                            {getStatusIcon(tmdbStatus)}
+                            Test Connection
+                        </button>
+                        {tmdbTestResult && (
+                            <span className={`test-result ${tmdbTestResult.success ? 'success' : 'error'}`}>
+                                {tmdbTestResult.message}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 <h2 className="section-title">Trakt Integration</h2>
@@ -175,14 +309,39 @@ const Settings = () => {
 
                 <div className="form-group">
                     <label htmlFor="traktId">Trakt Client ID</label>
-                    <input
-                        type="text"
-                        id="traktId"
-                        value={traktClientId}
-                        onChange={(e) => setTraktClientId(e.target.value)}
-                        placeholder="Enter your Trakt Client ID"
-                    />
+                    <div className="password-input-wrapper">
+                        <input
+                            type={showTraktId ? "text" : "password"}
+                            id="traktId"
+                            value={traktClientId}
+                            onChange={(e) => setTraktClientId(e.target.value)}
+                            placeholder="Enter your Trakt Client ID"
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password"
+                            onClick={() => setShowTraktId(!showTraktId)}
+                            aria-label="Toggle password visibility"
+                        >
+                            {showTraktId ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                     <small>Get this from trakt.tv/oauth/applications after registering your app.</small>
+                    <div className="test-row">
+                        <button
+                            className="btn-test"
+                            onClick={testTrakt}
+                            disabled={!traktClientId || traktStatus === 'testing'}
+                        >
+                            {getStatusIcon(traktStatus)}
+                            Test Connection
+                        </button>
+                        {traktTestResult && (
+                            <span className={`test-result ${traktTestResult.success ? 'success' : 'error'}`}>
+                                {traktTestResult.message}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 <TraktAuth />

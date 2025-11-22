@@ -5,12 +5,12 @@
     margin-top: auto;
 }
 
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
+.footer-content p,
+.footer p {
+    margin: 0;
     color: var(--color-text-secondary);
     font-size: 0.875rem;
+    text-align: center;
 }
 
 .footer-note {

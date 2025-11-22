@@ -14,31 +14,40 @@ const Header = () => {
 
     const isActive = (path) => location.pathname === path;
 
+    // Determine logo color based on current page
+    const getLogoClass = () => {
+        if (location.pathname === '/search') return 'logo-search';
+        if (location.pathname === '/discover') return 'logo-discover';
+        if (location.pathname === '/downloads') return 'logo-downloads';
+        if (location.pathname === '/settings') return 'logo-settings';
+        return 'logo-home'; // Default/Home
+    };
+
     return (
         <header className="header">
             <div className="header-content">
                 <Link to="/" className="logo">
-                    <span className="logo-text">The Entertainment District</span>
+                    <span className={`logo-text ${getLogoClass()}`}>The Entertainment District</span>
                 </Link>
 
                 <div className="nav-links">
-                    <Link to="/" className={`nav-item ${isActive('/') ? 'active' : ''}`}>
-                        <Home size={20} />
-                        <span>Home</span>
-                    </Link>
-                    <Link to="/discover" className={`nav-item ${isActive('/discover') ? 'active' : ''}`}>
-                        <Compass size={20} />
-                        <span>Discover</span>
-                    </Link>
-                    <Link to="/downloads" className={`nav-item ${isActive('/downloads') ? 'active' : ''}`}>
-                        <Download size={20} />
-                        <span>Downloads</span>
-                    </Link>
-                    <Link to="/search" className={`nav-item ${isActive('/search') ? 'active' : ''}`}>
+                    <Link to="/search" className={`nav-item nav-item-search ${isActive('/search') ? 'active' : ''}`}>
                         <Search size={20} />
                         <span>Search</span>
                     </Link>
-                    <Link to="/settings" className={`nav-item ${isActive('/settings') ? 'active' : ''}`}>
+                    <Link to="/" className={`nav-item nav-item-home ${isActive('/') ? 'active' : ''}`}>
+                        <Home size={20} />
+                        <span>Home</span>
+                    </Link>
+                    <Link to="/discover" className={`nav-item nav-item-discover ${isActive('/discover') ? 'active' : ''}`}>
+                        <Compass size={20} />
+                        <span>Discover</span>
+                    </Link>
+                    <Link to="/downloads" className={`nav-item nav-item-downloads ${isActive('/downloads') ? 'active' : ''}`}>
+                        <Download size={20} />
+                        <span>Downloads</span>
+                    </Link>
+                    <Link to="/settings" className={`nav-item nav-item-settings ${isActive('/settings') ? 'active' : ''}`}>
                         <Settings size={20} />
                         <span>Settings</span>
                     </Link>

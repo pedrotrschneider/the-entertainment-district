@@ -90,8 +90,19 @@
 }
 
 .btn-action:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-action:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-action:disabled:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-download {

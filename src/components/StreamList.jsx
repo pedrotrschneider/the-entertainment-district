@@ -1,8 +1,13 @@
 import React from 'react';
 import { Download, Play, HardDrive, Link } from 'lucide-react';
+import { useToast } from './Toast';
+import useServiceStatusStore from '../store/serviceStatusStore';
 import './StreamList.css';
 
 const StreamList = ({ streams, onSelect }) => {
+    const toast = useToast();
+    const { isRealDebridAvailable, isRdtClientAvailable } = useServiceStatusStore();
+
     if (!streams || streams.length === 0) {
         return <div className="no-streams">No streams found.</div>;
     }
@@ -29,10 +34,10 @@ const StreamList = ({ streams, onSelect }) => {
     const handleCopyMagnet = (stream) => {
         const magnetLink = getMagnetLink(stream);
         navigator.clipboard.writeText(magnetLink).then(() => {
-            alert('Magnet link copied to clipboard!');
+            toast.success('Magnet link copied to clipboard!');
         }).catch(err => {
             console.error('Failed to copy:', err);
-            alert('Failed to copy magnet link');
+            toast.error('Failed to copy magnet link');
         });
     };
 
@@ -64,7 +69,8 @@ const StreamList = ({ streams, onSelect }) => {
                                 <button
                                     className="btn-action btn-download"
                                     onClick={() => onSelect(stream, 'download')}
-                                    title="Download to Home Server"
+                                    title={isRdtClientAvailable() ? "Download to Home Server" : "RDT Client not connected"}
+                                    disabled={!isRdtClientAvailable()}
                                 >
                                     <HardDrive size={18} />
                                     <span>Download</span>
@@ -72,7 +78,8 @@ const StreamList = ({ streams, onSelect }) => {
                                 <button
                                     className="btn-action btn-debrid"
                                     onClick={() => onSelect(stream, 'debrid')}
-                                    title="Add to Debrid"
+                                    title={isRealDebridAvailable() ? "Add to Debrid" : "Real-Debrid not connected"}
+                                    disabled={!isRealDebridAvailable()}
                                 >
                                     <Download size={18} />
                                     <span>Add</span>
@@ -80,7 +87,8 @@ const StreamList = ({ streams, onSelect }) => {
                                 <button
                                     className="btn-action btn-watch"
                                     onClick={() => onSelect(stream, 'watch')}
-                                    title="Watch Now"
+                                    title={isRealDebridAvailable() ? "Watch Now" : "Real-Debrid not connected"}
+                                    disabled={!isRealDebridAvailable()}
                                 >
                                     <Play size={18} />
                                     <span>Watch</span>

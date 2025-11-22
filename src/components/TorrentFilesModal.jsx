@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Play, File } from 'lucide-react';
 import realdebrid from '../services/realdebrid';
+import { useToast } from './Toast';
 import './TorrentFilesModal.css';
 
 const TorrentFilesModal = ({ isOpen, onClose, magnetLink, mediaTitle }) => {
+    const toast = useToast();
     const [loading, setLoading] = useState(false);
     const [files, setFiles] = useState([]);
     const [torrentId, setTorrentId] = useState(null);
@@ -61,7 +63,7 @@ const TorrentFilesModal = ({ isOpen, onClose, magnetLink, mediaTitle }) => {
             }
         } catch (err) {
             console.error('Error playing file:', err);
-            alert('Failed to play file: ' + err.message);
+            toast.error('Failed to play file: ' + err.message);
         }
     };
 

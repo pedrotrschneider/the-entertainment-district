@@ -33,7 +33,7 @@
 }
 
 .type-btn.active {
-    background-color: var(--color-primary);
+    background-color: var(--color-accent);
     color: white;
 }
 
@@ -64,13 +64,13 @@
 }
 
 .genre-chip:hover {
-    border-color: var(--color-primary);
+    border-color: var(--color-accent);
     color: var(--color-text);
 }
 
 .genre-chip.active {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
     color: white;
 }
 

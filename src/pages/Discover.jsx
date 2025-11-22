@@ -4,6 +4,7 @@ import MediaGrid from '../components/MediaGrid';
 import { MediaGridSkeleton } from '../components/LoadingSkeleton';
 import { Film, Tv } from 'lucide-react';
 import './Discover.css';
+import './DiscoverOverrides.css';
 
 const GENRES = [
     'Action', 'Adventure', 'Animation', 'Comedy', 'Crime',

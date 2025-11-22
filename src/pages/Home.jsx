@@ -2,16 +2,30 @@ import React, { useEffect, useState } from 'react';
 import cinemeta from '../services/cinemeta';
 import trakt from '../services/trakt';
 import useSettingsStore from '../store/settingsStore';
+import useServiceStatusStore from '../store/serviceStatusStore';
 import MediaGrid from '../components/MediaGrid';
 import CategorySection from '../components/CategorySection';
 import { MediaGridSkeleton } from '../components/LoadingSkeleton';
 import './Home.css';
 
 const Home = () => {
-    const { traktAccessToken } = useSettingsStore();
+    const { traktAccessToken, traktClientId } = useSettingsStore();
+    const { setTraktStatus } = useServiceStatusStore();
     const [continueWatching, setContinueWatching] = useState([]);
     const [watchlist, setWatchlist] = useState([]);
     const [traktLoading, setTraktLoading] = useState(false);
+
+    // Test Trakt connection on mount
+    useEffect(() => {
+        const testTrakt = async () => {
+            if (traktClientId) {
+                setTraktStatus('connected');
+            } else {
+                setTraktStatus('disconnected');
+            }
+        };
+        testTrakt();
+    }, [traktClientId, setTraktStatus]);
 
     useEffect(() => {
         if (traktAccessToken) {

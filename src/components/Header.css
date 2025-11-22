@@ -25,8 +25,32 @@
 .logo-text {
     font-size: 1.25rem;
     font-weight: 800;
-    color: var(--color-primary);
     letter-spacing: -0.02em;
+    background-image: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-primary) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: background-image 0.3s ease;
+}
+
+.logo-text.logo-home {
+    background-image: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-primary) 100%);
+}
+
+.logo-text.logo-search {
+    background-image: linear-gradient(135deg, var(--color-text-secondary) 0%, #3399ff 100%);
+}
+
+.logo-text.logo-discover {
+    background-image: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-accent) 100%);
+}
+
+.logo-text.logo-downloads {
+    background-image: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-secondary) 100%);
+}
+
+.logo-text.logo-settings {
+    background-image: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-text-secondary) 100%);
 }
 
 .nav-links {
@@ -47,9 +71,42 @@
 
 .nav-item:hover,
 .nav-item.active {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item-home:hover,
+.nav-item-home.active {
     color: var(--color-primary);
+    /* Red */
     background-color: rgba(230, 0, 92, 0.1);
-    /* Primary with opacity */
+}
+
+.nav-item-search:hover,
+.nav-item-search.active {
+    color: #3399ff;
+    /* Blue */
+    background-color: rgba(51, 153, 255, 0.1);
+}
+
+.nav-item-discover:hover,
+.nav-item-discover.active {
+    color: var(--color-accent);
+    /* Purple */
+    background-color: rgba(153, 51, 255, 0.1);
+}
+
+.nav-item-downloads:hover,
+.nav-item-downloads.active {
+    color: var(--color-secondary);
+    /* Green */
+    background-color: rgba(0, 179, 60, 0.1);
+}
+
+.nav-item-settings:hover,
+.nav-item-settings.active {
+    color: var(--color-text-secondary);
+    /* Gray */
+    background-color: rgba(128, 128, 128, 0.1);
 }
 
 .theme-toggle {

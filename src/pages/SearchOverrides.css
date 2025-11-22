@@ -1,0 +1,9 @@
+.search-page .section-title {
+    border-left-color: #3399ff;
+}
+
+.search-page .btn-show-more:hover,
+.search-page .btn-show-less:hover {
+    background-color: #3399ff;
+    border-color: #3399ff;
+}

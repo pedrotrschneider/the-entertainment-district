@@ -111,6 +111,31 @@ const tmdb = {
     getImageUrl: (path, size = 'w500') => {
         if (!path) return null;
         return `${TMDB_IMAGE_BASE}/${size}${path}`;
+    },
+
+    testConnection: async () => {
+        try {
+            const { tmdbApiKey } = useSettingsStore.getState();
+
+            if (!tmdbApiKey) {
+                throw new Error('TMDB API key not configured');
+            }
+
+            // Test by getting configuration (lightweight endpoint)
+            const response = await axios.get(`${TMDB_BASE_URL}/configuration`, {
+                params: {
+                    api_key: tmdbApiKey
+                }
+            });
+
+            return { success: true, data: response.data };
+        } catch (error) {
+            console.error('TMDB connection test failed:', error);
+            if (error.response?.status === 401) {
+                return { success: false, error: 'Invalid API key' };
+            }
+            return { success: false, error: error.message };
+        }
     }
 };
 

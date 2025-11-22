@@ -66,6 +66,23 @@ const realdebrid = {
             console.error('Error unrestricting link:', error);
             throw error;
         }
+    },
+
+    testConnection: async () => {
+        try {
+            const { realDebridApiKey } = useSettingsStore.getState();
+            if (!realDebridApiKey) {
+                throw new Error('No API key configured');
+            }
+
+            const response = await axios.get(`${BASE_URL}/user`, {
+                headers: getHeaders()
+            });
+            return { success: true, data: response.data };
+        } catch (error) {
+            console.error('Real-Debrid connection test failed:', error);
+            return { success: false, error: error.message };
+        }
     }
 };
 

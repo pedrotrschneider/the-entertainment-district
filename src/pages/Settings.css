@@ -54,14 +54,82 @@
     right: 10px;
     background: none;
     border: none;
-    color: var(--color-text-secondary);
+    color: var(--color-text);
+    text-decoration: underline;
     cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+    margin-left: auto;
+}
+
+.btn-test {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    transition: all 0.2s ease;
+}
+
+.btn-test:hover:not(:disabled) {
+    background-color: var(--color-border);
+    border-color: var(--color-text-secondary);
+}
+
+.btn-test:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.test-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: var(--spacing-xs);
-    border-radius: var(--radius-sm);
-    transition: color 0.2s ease, background-color 0.2s ease;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+.test-result {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.test-result.success {
+    color: var(--color-success);
+}
+
+.test-result.error {
+    color: var(--color-error);
+}
+
+.status-icon {
+    display: inline-block;
+}
+
+.status-icon.spinning {
+    animation: spin 1s linear infinite;
+}
+
+.status-icon.success {
+    color: var(--color-success);
+}
+
+.status-icon.error {
+    color: var(--color-error);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .toggle-password:hover {

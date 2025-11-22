@@ -1,0 +1,12 @@
+/* Page-specific accent colors for section titles */
+.search-page .section-title {
+    border-left-color: #3399ff;
+}
+
+.discover-page .section-title {
+    border-left-color: var(--color-accent);
+}
+
+.downloads-page .section-title {
+    border-left-color: var(--color-secondary);
+}

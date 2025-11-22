@@ -1,0 +1,9 @@
+.discover-page .section-title {
+    border-left-color: var(--color-accent);
+}
+
+.discover-page .btn-show-more:hover,
+.discover-page .btn-show-less:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}

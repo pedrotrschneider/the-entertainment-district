@@ -4,6 +4,7 @@ import cinemeta from '../services/cinemeta';
 import MediaGrid from '../components/MediaGrid';
 import { Search as SearchIcon, Star } from 'lucide-react';
 import './Search.css';
+import './SearchOverrides.css';
 
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -52,6 +53,33 @@ const Search = () => {
             }
         };
     }, [searchTerm]);
+
+    // Perform search when query parameter changes
+    useEffect(() => {
+        const performSearch = async () => {
+            if (!query) {
+                setMovieResults([]);
+                setSeriesResults([]);
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const [movies, series] = await Promise.all([
+                    cinemeta.search('movie', query),
+                    cinemeta.search('series', query)
+                ]);
+                setMovieResults(movies);
+                setSeriesResults(series);
+            } catch (error) {
+                console.error('Search error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        performSearch();
+    }, [query]);
 
     const handleSearch = (e) => {
         e.preventDefault();

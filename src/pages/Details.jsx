@@ -7,6 +7,7 @@ import rdtclient from '../services/rdtclient';
 import trakt from '../services/trakt';
 import tmdb from '../services/tmdb';
 import useSettingsStore from '../store/settingsStore';
+import useServiceStatusStore from '../store/serviceStatusStore';
 import StreamList from '../components/StreamList';
 import CastCarousel from '../components/CastCarousel';
 import DownloadOptionsModal from '../components/DownloadOptionsModal';
@@ -23,6 +24,7 @@ const Details = () => {
     const [streams, setStreams] = useState([]);
     const [loadingStreams, setLoadingStreams] = useState(false);
     const { rdtClientMoviesPath, rdtClientShowsPath, traktAccessToken } = useSettingsStore();
+    const { setRealDebridStatus, setRdtClientStatus } = useServiceStatusStore();
 
     // Series state
     const [selectedSeason, setSelectedSeason] = useState(1);
@@ -44,6 +46,20 @@ const Details = () => {
 
     // Enhanced cast from TMDB
     const [enhancedCast, setEnhancedCast] = useState([]);
+
+    // Test service connections on mount
+    useEffect(() => {
+        const testServices = async () => {
+            // Test Real-Debrid
+            const rdResult = await realdebrid.testConnection();
+            setRealDebridStatus(rdResult.success ? 'connected' : 'disconnected');
+
+            // Test RDT Client
+            const rdtResult = await rdtclient.testConnection();
+            setRdtClientStatus(rdtResult.success ? 'connected' : 'disconnected');
+        };
+        testServices();
+    }, [setRealDebridStatus, setRdtClientStatus]);
 
     useEffect(() => {
         const fetchMeta = async () => {

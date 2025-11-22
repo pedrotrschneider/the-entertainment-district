@@ -158,6 +158,24 @@ const rdtclient = {
             }
             throw error;
         }
+    },
+
+    testConnection: async () => {
+        try {
+            const { rdtClientUrl, rdtClientUsername, rdtClientPassword } = useSettingsStore.getState();
+
+            if (!rdtClientUrl || !rdtClientUsername || !rdtClientPassword) {
+                throw new Error('RDT Client credentials not configured');
+            }
+
+            // Directly test authentication by calling login
+            await rdtclient.authenticate();
+
+            return { success: true };
+        } catch (error) {
+            console.error('RDT Client connection test failed:', error);
+            return { success: false, error: error.message };
+        }
     }
 };
 
