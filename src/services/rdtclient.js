@@ -40,15 +40,39 @@ const rdtclient = {
         }
     },
 
+    checkLogin: async () => {
+        try {
+            const { rdtClientUrl } = useSettingsStore.getState();
+            if (!rdtClientUrl) return false;
+
+            const baseUrl = import.meta.env.DEV ? '' : rdtClientUrl.replace(/\/$/, '');
+
+            await axios.get(`${baseUrl}/Api/Authentication/IsLoggedIn`, {
+                withCredentials: true
+            });
+            return true;
+        } catch (error) {
+            return false;
+        }
+    },
+
+    ensureLoggedIn: async () => {
+        const isLoggedIn = await rdtclient.checkLogin();
+        if (!isLoggedIn) {
+            console.log('RDT Client not logged in, authenticating...');
+            await rdtclient.authenticate();
+        }
+    },
+
     addTorrent: async (magnetLink, mediaType = 'movie', options = {}) => {
         try {
             const { rdtClientUrl, rdtClientMoviesPath, rdtClientShowsPath } = useSettingsStore.getState();
 
             if (!rdtClientUrl) throw new Error('RDT Client URL not configured');
 
-            // LOGIC SWITCH:
-            // If Dev: Use empty string (browser resolves to localhost:3000/api...) -> Hits Proxy
-            // If Prod: Use the User's URL (http://192.../api...) -> Direct Request
+            // Ensure we are logged in before proceeding
+            await rdtclient.ensureLoggedIn();
+
             const baseUrl = import.meta.env.DEV
                 ? ''
                 : rdtClientUrl.replace(/\/$/, '');
@@ -79,32 +103,18 @@ const rdtclient = {
                 }
             };
 
-            const makeRequest = async () => {
-                return await axios.post(
-                    `${baseUrl}/Api/Torrents/UploadMagnet`,
-                    payload,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        withCredentials: true // Send cookies with request
-                    }
-                );
-            };
-
-            try {
-                const response = await makeRequest();
-                return response.data;
-            } catch (error) {
-                // If unauthorized, try to authenticate and retry
-                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-                    console.log('RDT Client unauthorized, attempting to login...');
-                    await rdtclient.authenticate();
-                    const response = await makeRequest();
-                    return response.data;
+            const response = await axios.post(
+                `${baseUrl}/Api/Torrents/UploadMagnet`,
+                payload,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true // Send cookies with request
                 }
-                throw error;
-            }
+            );
+
+            return response.data;
         } catch (error) {
             console.error('Error adding torrent to RDT Client:', error);
 
@@ -123,34 +133,24 @@ const rdtclient = {
 
             if (!rdtClientUrl) throw new Error('RDT Client URL not configured');
 
+            // Ensure we are logged in before proceeding
+            await rdtclient.ensureLoggedIn();
+
             const baseUrl = import.meta.env.DEV
                 ? ''
                 : rdtClientUrl.replace(/\/$/, '');
 
-            const makeRequest = async () => {
-                return await axios.get(
-                    `${baseUrl}/Api/Torrents`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        withCredentials: true
-                    }
-                );
-            };
-
-            try {
-                const response = await makeRequest();
-                return response.data;
-            } catch (error) {
-                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-                    console.log('RDT Client unauthorized, attempting to login...');
-                    await rdtclient.authenticate();
-                    const response = await makeRequest();
-                    return response.data;
+            const response = await axios.get(
+                `${baseUrl}/Api/Torrents`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
                 }
-                throw error;
-            }
+            );
+
+            return response.data;
         } catch (error) {
             console.error('Error fetching torrents from RDT Client:', error);
             if (error.message?.includes('Network Error') || error.code === 'ERR_NETWORK') {
