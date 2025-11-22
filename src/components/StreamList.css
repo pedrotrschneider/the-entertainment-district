@@ -92,6 +92,11 @@
     /* Pink for Watch */
 }
 
+.btn-files {
+    background-color: #3b82f6;
+    /* Blue for Show Files */
+}
+
 .no-streams {
     text-align: center;
     color: var(--color-text-secondary);
