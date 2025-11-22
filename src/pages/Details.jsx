@@ -5,6 +5,7 @@ import torrentio from '../services/torrentio';
 import realdebrid from '../services/realdebrid';
 import rdtclient from '../services/rdtclient';
 import StreamList from '../components/StreamList';
+import CastCarousel from '../components/CastCarousel';
 import './Details.css';
 
 const Details = () => {
@@ -79,21 +80,26 @@ const Details = () => {
                 setStatusMessage('Selecting files...');
                 await realdebrid.selectFiles(added.id, 'all');
 
-                setStatusMessage('Getting link...');
+                // Wait a moment for Real-Debrid to process
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                setStatusMessage('Getting streaming link...');
                 const info = await realdebrid.getTorrentInfo(added.id);
 
-                // Find the largest file or the first video file
-                // Real-Debrid links are in info.links
+                // Find the largest video file (highest quality)
                 if (info.links && info.links.length > 0) {
                     setStatusMessage('Unrestricting link...');
                     const unrestricted = await realdebrid.unrestrictLink(info.links[0]);
 
-                    navigate('/player', {
-                        state: {
-                            streamUrl: unrestricted.download,
-                            title: meta.name
-                        }
-                    });
+                    // Open the streamable link - Real-Debrid's download link can be streamed directly
+                    // Or we can construct the streaming page URL from the unrestricted data
+                    if (unrestricted.streamable === 1) {
+                        // Use Real-Debrid's streaming interface
+                        window.open(`https://real-debrid.com/streaming-${unrestricted.id}`, '_blank');
+                    } else {
+                        // Fallback: just open the download link which can still be streamed in browser
+                        window.open(unrestricted.download, '_blank');
+                    }
                 } else {
                     alert('No links found in torrent.');
                 }
@@ -150,12 +156,7 @@ const Details = () => {
 
                     <p className="media-description">{description}</p>
 
-                    {cast && cast.length > 0 && (
-                        <div className="media-cast">
-                            <h3>Cast</h3>
-                            <p>{cast.slice(0, 5).map(c => c.name).join(', ')}</p>
-                        </div>
-                    )}
+                    <CastCarousel cast={cast} />
 
                     {type === 'series' && (
                         <div className="series-selector">
