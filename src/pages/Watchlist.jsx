@@ -12,7 +12,6 @@ const Watchlist = () => {
     const [watchlist, setWatchlist] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all'); // 'all', 'movies', 'shows'
-    const [watchHistory, setWatchHistory] = useState([]);
 
     useEffect(() => {
         if (!traktAccessToken || !traktAccountInfo) {
@@ -20,25 +19,25 @@ const Watchlist = () => {
             return;
         }
 
-        fetchWatchHistory();
-        fetchWatchlist();
+        fetchData();
     }, [traktAccessToken, traktAccountInfo, filter, navigate]);
 
-    const fetchWatchHistory = async () => {
+    const fetchData = async () => {
+        setLoading(true);
+
+        // Fetch watch history first
+        let watchedIds = [];
         try {
             const history = await trakt.getHistory('all', 1, 100);
-            const watchedIds = history.map(item => {
+            watchedIds = history.map(item => {
                 const mediaItem = item.movie || item.show;
                 return mediaItem.ids.imdb;
             });
-            setWatchHistory(watchedIds);
         } catch (error) {
             console.error('Failed to fetch watch history:', error);
         }
-    };
 
-    const fetchWatchlist = async () => {
-        setLoading(true);
+        // Then fetch watchlist with watched status
         try {
             const data = await trakt.getWatchlist(filter === 'all' ? 'all' : filter);
 
@@ -64,7 +63,7 @@ const Watchlist = () => {
                     poster: poster,
                     year: mediaItem.year,
                     description: mediaItem.overview || '',
-                    isWatched: watchHistory.includes(imdbId)
+                    isWatched: watchedIds.includes(imdbId)
                 };
             }));
 
