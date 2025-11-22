@@ -39,7 +39,7 @@ const rdtclient = {
         }
     },
 
-    addTorrent: async (magnetLink, mediaType = 'movie') => {
+    addTorrent: async (magnetLink, mediaType = 'movie', options = {}) => {
         try {
             const { rdtClientUrl, rdtClientMoviesPath, rdtClientShowsPath } = useSettingsStore.getState();
 
@@ -57,14 +57,22 @@ const rdtclient = {
 
             // Add torrent using form-urlencoded
             // The session cookie from auth will be automatically sent with withCredentials
-            // Auto-select folder based on media type
-            const category = mediaType === 'series'
+            // Auto-select folder based on media type, or use custom folder from options
+            const category = options.folder || (mediaType === 'series'
                 ? (rdtClientShowsPath || 'TV Shows')
-                : (rdtClientMoviesPath || 'Movies');
+                : (rdtClientMoviesPath || 'Movies'));
 
             const formData = new URLSearchParams();
             formData.append('urls', magnetLink);
             formData.append('category', category);
+
+            // Add regex filters if provided
+            if (options.includeRegex) {
+                formData.append('includeRegex', options.includeRegex);
+            }
+            if (options.excludeRegex) {
+                formData.append('excludeRegex', options.excludeRegex);
+            }
 
             const response = await axios.post(
                 `${baseUrl}/api/v2/torrents/add`,

@@ -4,8 +4,10 @@ import cinemeta from '../services/cinemeta';
 import torrentio from '../services/torrentio';
 import realdebrid from '../services/realdebrid';
 import rdtclient from '../services/rdtclient';
+import useSettingsStore from '../store/settingsStore';
 import StreamList from '../components/StreamList';
 import CastCarousel from '../components/CastCarousel';
+import DownloadOptionsModal from '../components/DownloadOptionsModal';
 import './Details.css';
 
 const Details = () => {
@@ -15,6 +17,7 @@ const Details = () => {
     const [loading, setLoading] = useState(true);
     const [streams, setStreams] = useState([]);
     const [loadingStreams, setLoadingStreams] = useState(false);
+    const { rdtClientMoviesPath, rdtClientShowsPath } = useSettingsStore();
 
     // Series state
     const [selectedSeason, setSelectedSeason] = useState(1);
@@ -23,6 +26,10 @@ const Details = () => {
     // Action state
     const [processing, setProcessing] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+
+    // Download options modal state
+    const [showDownloadModal, setShowDownloadModal] = useState(false);
+    const [pendingDownload, setPendingDownload] = useState(null);
 
     useEffect(() => {
         const fetchMeta = async () => {
@@ -60,16 +67,25 @@ const Details = () => {
 
     const handleStreamSelect = async (stream, action) => {
         if (processing) return;
+
+        const magnetLink = stream.url || `magnet:?xt=urn:btih:${stream.infoHash}`;
+
+        if (action === 'download') {
+            // Show download options modal instead of downloading immediately
+            const defaultFolder = type === 'series'
+                ? (rdtClientShowsPath || 'TV Shows')
+                : (rdtClientMoviesPath || 'Movies');
+
+            setPendingDownload({ magnetLink, mediaType: type });
+            setShowDownloadModal(true);
+            return;
+        }
+
         setProcessing(true);
         setStatusMessage(`Processing ${action}...`);
 
         try {
-            const magnetLink = stream.url || `magnet:?xt=urn:btih:${stream.infoHash}`;
-
-            if (action === 'download') {
-                await rdtclient.addTorrent(magnetLink, type);
-                alert('Added to Home Server!');
-            } else if (action === 'debrid') {
+            if (action === 'debrid') {
                 const added = await realdebrid.addMagnet(magnetLink);
                 await realdebrid.selectFiles(added.id, 'all');
                 alert('Added to Real-Debrid!');
@@ -113,6 +129,29 @@ const Details = () => {
         }
     };
 
+    const handleDownloadConfirm = async (options) => {
+        if (!pendingDownload) return;
+
+        setProcessing(true);
+        setStatusMessage('Adding to home server...');
+
+        try {
+            await rdtclient.addTorrent(
+                pendingDownload.magnetLink,
+                pendingDownload.mediaType,
+                options
+            );
+            alert('Added to Home Server!');
+        } catch (error) {
+            console.error('Download failed:', error);
+            alert(`Download failed: ${error.message}`);
+        } finally {
+            setProcessing(false);
+            setStatusMessage('');
+            setPendingDownload(null);
+        }
+    };
+
     if (loading) {
         return <div className="loading">Loading details...</div>;
     }
@@ -131,6 +170,11 @@ const Details = () => {
     const episodes = type === 'series' && videos
         ? videos.filter(v => v.season === selectedSeason).sort((a, b) => a.episode - b.episode)
         : [];
+
+    // Get default folder for download modal
+    const defaultFolder = type === 'series'
+        ? (rdtClientShowsPath || 'TV Shows')
+        : (rdtClientMoviesPath || 'Movies');
 
     return (
         <div className="details-page">
@@ -209,6 +253,14 @@ const Details = () => {
                     </div>
                 </div>
             )}
+
+            <DownloadOptionsModal
+                isOpen={showDownloadModal}
+                onClose={() => setShowDownloadModal(false)}
+                onConfirm={handleDownloadConfirm}
+                defaultFolder={defaultFolder}
+                magnetLink={pendingDownload?.magnetLink}
+            />
         </div>
     );
 };
