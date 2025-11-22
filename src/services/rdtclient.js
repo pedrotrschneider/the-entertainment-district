@@ -16,17 +16,18 @@ const rdtclient = {
                 ? ''
                 : rdtClientUrl.replace(/\/$/, '');
 
-            // Authenticate using form-urlencoded
-            const formData = new URLSearchParams();
-            formData.append('username', rdtClientUsername);
-            formData.append('password', rdtClientPassword);
+            // Authenticate using JSON
+            const payload = {
+                username: rdtClientUsername,
+                password: rdtClientPassword
+            };
 
             const response = await axios.post(
-                `${baseUrl}/api/v2/auth/login`,
-                formData,
+                `${baseUrl}/Api/Authentication/Login`,
+                payload,
                 {
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/json'
                     },
                     withCredentials: true // Enable cookie handling
                 }
@@ -52,40 +53,58 @@ const rdtclient = {
                 ? ''
                 : rdtClientUrl.replace(/\/$/, '');
 
-            // First authenticate to get session cookie
-            await rdtclient.authenticate();
-
-            // Add torrent using form-urlencoded
-            // The session cookie from auth will be automatically sent with withCredentials
             // Auto-select folder based on media type, or use custom folder from options
             const category = options.folder || (mediaType === 'series'
                 ? (rdtClientShowsPath || 'TV Shows')
                 : (rdtClientMoviesPath || 'Movies'));
 
-            const formData = new URLSearchParams();
-            formData.append('urls', magnetLink);
-            formData.append('category', category);
-
-            // Add regex filters if provided
-            if (options.includeRegex) {
-                formData.append('includeRegex', options.includeRegex);
-            }
-            if (options.excludeRegex) {
-                formData.append('excludeRegex', options.excludeRegex);
-            }
-
-            const response = await axios.post(
-                `${baseUrl}/api/v2/torrents/add`,
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    withCredentials: true // Send cookies with request
+            const payload = {
+                magnetLink: magnetLink,
+                torrent: {
+                    category: category,
+                    hostDownloadAction: 0,
+                    downloadAction: 1,
+                    finishedAction: 1,
+                    finishedActionDelay: 0,
+                    downloadMinSize: 0,
+                    includeRegex: options.includeRegex || null,
+                    excludeRegex: options.excludeRegex || null,
+                    downloadManualFiles: null,
+                    priority: 0,
+                    torrentRetryAttempts: 1,
+                    downloadRetryAttempts: 3,
+                    deleteOnError: 0,
+                    lifetime: 0,
+                    downloadClient: 0
                 }
-            );
+            };
 
-            return response.data;
+            const makeRequest = async () => {
+                return await axios.post(
+                    `${baseUrl}/Api/Torrents/UploadMagnet`,
+                    payload,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        withCredentials: true // Send cookies with request
+                    }
+                );
+            };
+
+            try {
+                const response = await makeRequest();
+                return response.data;
+            } catch (error) {
+                // If unauthorized, try to authenticate and retry
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    console.log('RDT Client unauthorized, attempting to login...');
+                    await rdtclient.authenticate();
+                    const response = await makeRequest();
+                    return response.data;
+                }
+                throw error;
+            }
         } catch (error) {
             console.error('Error adding torrent to RDT Client:', error);
 

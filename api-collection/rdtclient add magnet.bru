@@ -5,14 +5,32 @@ meta {
 }
 
 post {
-  url: {{host}}/api/v2/torrents/add
-  body: formUrlEncoded
+  url: {{host}}/Api/Torrents/UploadMagnet
+  body: json
   auth: inherit
 }
 
-body:form-urlencoded {
-  urls: magnet:?xt=urn:btih:86f93b2baa94e23818e8ffca50e1ba20603a87dd
-  category: Test
+body:json {
+  {
+    "magnetLink": "magnet:?xt=urn:btih:86f93b2baa94e23818e8ffca50e1ba20603a87dd",
+    "torrent": {
+      "category": "Test",
+      "hostDownloadAction": 0,
+      "downloadAction": 1,
+      "finishedAction": 1,
+      "finishedActionDelay": 0,
+      "downloadMinSize": 0,
+      "includeRegex": null,
+      "excludeRegex": null,
+      "downloadManualFiles": null,
+      "priority": 0,
+      "torrentRetryAttempts": 1,
+      "downloadRetryAttempts": 3,
+      "deleteOnError": 0,
+      "lifetime": 0,
+      "downloadClient": 0
+    }
+  }
 }
 
 settings {
