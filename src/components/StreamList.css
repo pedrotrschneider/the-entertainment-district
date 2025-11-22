@@ -1,0 +1,99 @@
+.stream-list {
+    margin-top: var(--spacing-xl);
+    background-color: var(--color-surface);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.stream-list h3 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    font-size: 1.25rem;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-sm);
+}
+
+.streams-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.stream-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background-color: var(--color-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    transition: border-color 0.2s ease;
+}
+
+.stream-item:hover {
+    border-color: var(--color-primary);
+}
+
+.stream-info {
+    flex: 1;
+}
+
+.stream-quality {
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stream-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.stream-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.btn-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    color: white;
+}
+
+.btn-action:hover {
+    transform: scale(1.1);
+}
+
+.btn-download {
+    background-color: var(--color-secondary);
+    /* Green for download */
+}
+
+.btn-debrid {
+    background-color: var(--color-accent);
+    /* Purple for Debrid */
+}
+
+.btn-watch {
+    background-color: var(--color-primary);
+    /* Pink for Watch */
+}
+
+.no-streams {
+    text-align: center;
+    color: var(--color-text-secondary);
+    padding: var(--spacing-lg);
+}
