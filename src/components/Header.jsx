@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Settings, Moon, Sun } from 'lucide-react';
+import { Home, Search, Settings, Moon, Sun, Compass } from 'lucide-react';
 import useSettingsStore from '../store/settingsStore';
 import './Header.css';
 
@@ -22,17 +22,21 @@ const Header = () => {
                 </Link>
 
                 <div className="nav-links">
-                    <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-                        Home
+                    <Link to="/" className={`nav-item ${isActive('/') ? 'active' : ''}`}>
+                        <Home size={20} />
+                        <span>Home</span>
                     </Link>
-                    <Link to="/discover" className={`nav-link ${location.pathname === '/discover' ? 'active' : ''}`}>
-                        Discover
+                    <Link to="/discover" className={`nav-item ${isActive('/discover') ? 'active' : ''}`}>
+                        <Compass size={20} />
+                        <span>Discover</span>
                     </Link>
-                    <Link to="/search" className={`nav-link ${location.pathname === '/search' ? 'active' : ''}`}>
-                        Search
+                    <Link to="/search" className={`nav-item ${isActive('/search') ? 'active' : ''}`}>
+                        <Search size={20} />
+                        <span>Search</span>
                     </Link>
-                    <Link to="/settings" className={`nav-link ${location.pathname === '/settings' ? 'active' : ''}`}>
-                        Settings
+                    <Link to="/settings" className={`nav-item ${isActive('/settings') ? 'active' : ''}`}>
+                        <Settings size={20} />
+                        <span>Settings</span>
                     </Link>
                 </div>
 
