@@ -6,6 +6,7 @@ import Search from './pages/Search';
 import Settings from './pages/Settings';
 import Details from './pages/Details';
 import Player from './pages/Player';
+import Watchlist from './pages/Watchlist';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/media/:type/:id" element={<Details />} />
           <Route path="/player" element={<Player />} />
+          <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </Layout>

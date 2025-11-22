@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useSettingsStore from '../store/settingsStore';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ExternalLink } from 'lucide-react';
+import TraktAuth from '../components/TraktAuth';
 import './Settings.css';
 
 const Settings = () => {
@@ -148,20 +149,36 @@ const Settings = () => {
                     <small>Folder/category for TV show downloads.</small>
                 </div>
 
+                <h2 className="section-title">Trakt Integration</h2>
+                <p className="section-desc">
+                    Sync your watchlist and watch history with Trakt.tv.{' '}
+                    <a
+                        href="/TRAKT_SETUP.md"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="setup-link"
+                    >
+                        Setup Instructions <ExternalLink size={14} />
+                    </a>
+                </p>
+
                 <div className="form-group">
-                    <label htmlFor="traktId">Trakt Client ID (Optional)</label>
+                    <label htmlFor="traktId">Trakt Client ID</label>
                     <input
                         type="text"
                         id="traktId"
                         value={traktId}
                         onChange={(e) => setTraktId(e.target.value)}
-                        placeholder="Trakt Client ID"
+                        placeholder="Enter your Trakt Client ID"
                     />
+                    <small>Get this from trakt.tv/oauth/applications after registering your app.</small>
                 </div>
 
                 <button type="submit" className="btn-primary">
                     {saved ? 'Saved!' : 'Save Settings'}
                 </button>
+
+                <TraktAuth />
             </form>
         </div>
     );

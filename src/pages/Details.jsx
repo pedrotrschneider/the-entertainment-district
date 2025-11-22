@@ -4,6 +4,7 @@ import cinemeta from '../services/cinemeta';
 import torrentio from '../services/torrentio';
 import realdebrid from '../services/realdebrid';
 import rdtclient from '../services/rdtclient';
+import trakt from '../services/trakt';
 import useSettingsStore from '../store/settingsStore';
 import StreamList from '../components/StreamList';
 import CastCarousel from '../components/CastCarousel';
@@ -17,7 +18,7 @@ const Details = () => {
     const [loading, setLoading] = useState(true);
     const [streams, setStreams] = useState([]);
     const [loadingStreams, setLoadingStreams] = useState(false);
-    const { rdtClientMoviesPath, rdtClientShowsPath } = useSettingsStore();
+    const { rdtClientMoviesPath, rdtClientShowsPath, traktAccessToken } = useSettingsStore();
 
     // Series state
     const [selectedSeason, setSelectedSeason] = useState(1);
@@ -30,6 +31,12 @@ const Details = () => {
     // Download options modal state
     const [showDownloadModal, setShowDownloadModal] = useState(false);
     const [pendingDownload, setPendingDownload] = useState(null);
+
+    // Trakt state
+    const [inWatchlist, setInWatchlist] = useState(false);
+    const [checkingWatchlist, setCheckingWatchlist] = useState(false);
+    const [isWatched, setIsWatched] = useState(false);
+    const [checkingWatched, setCheckingWatched] = useState(false);
 
     useEffect(() => {
         const fetchMeta = async () => {
@@ -152,6 +159,102 @@ const Details = () => {
         }
     };
 
+    // Trakt watchlist functions
+    const checkWatchlistStatus = async () => {
+        if (!traktAccessToken || !id) return;
+
+        setCheckingWatchlist(true);
+        try {
+            const watchlist = await trakt.getWatchlist();
+            const isInList = watchlist.some(item => {
+                const mediaItem = item.movie || item.show;
+                return mediaItem.ids.imdb === id;
+            });
+            setInWatchlist(isInList);
+        } catch (error) {
+            console.error('Failed to check watchlist:', error);
+        } finally {
+            setCheckingWatchlist(false);
+        }
+    };
+
+    const checkWatchedStatus = async () => {
+        if (!traktAccessToken || !id) return;
+
+        setCheckingWatched(true);
+        try {
+            const history = await trakt.getHistory(type === 'series' ? 'shows' : 'movies', 1, 50);
+            const isInHistory = history.some(item => {
+                const mediaItem = item.movie || item.show;
+                return mediaItem.ids.imdb === id;
+            });
+            setIsWatched(isInHistory);
+        } catch (error) {
+            console.error('Failed to check watch history:', error);
+        } finally {
+            setCheckingWatched(false);
+        }
+    };
+
+    const toggleWatchlist = async () => {
+        if (!traktAccessToken) {
+            alert('Please connect to Trakt in Settings first');
+            return;
+        }
+
+        try {
+            const item = type === 'movie'
+                ? { movies: [{ ids: { imdb: id } }] }
+                : { shows: [{ ids: { imdb: id } }] };
+
+            if (inWatchlist) {
+                await trakt.removeFromWatchlist(item);
+                setInWatchlist(false);
+                alert('Removed from watchlist');
+            } else {
+                await trakt.addToWatchlist(item);
+                setInWatchlist(true);
+                alert('Added to watchlist!');
+            }
+        } catch (error) {
+            console.error('Watchlist toggle failed:', error);
+            alert(`Failed to update watchlist: ${error.message}`);
+        }
+    };
+
+    const markAsWatched = async () => {
+        if (!traktAccessToken) {
+            alert('Please connect to Trakt in Settings first');
+            return;
+        }
+
+        if (isWatched) {
+            alert('Already marked as watched');
+            return;
+        }
+
+        try {
+            const item = type === 'movie'
+                ? { movies: [{ ids: { imdb: id }, watched_at: new Date().toISOString() }] }
+                : { shows: [{ ids: { imdb: id }, watched_at: new Date().toISOString() }] };
+
+            await trakt.addToHistory(item);
+            setIsWatched(true); // Update state
+            alert('Marked as watched!');
+        } catch (error) {
+            console.error('Mark as watched failed:', error);
+            alert(`Failed to mark as watched: ${error.message}`);
+        }
+    };
+
+    // Check watchlist and watched status when meta loads
+    useEffect(() => {
+        if (meta && traktAccessToken) {
+            checkWatchlistStatus();
+            checkWatchedStatus();
+        }
+    }, [meta, traktAccessToken, id]);
+
     if (loading) {
         return <div className="loading">Loading details...</div>;
     }
@@ -199,6 +302,21 @@ const Details = () => {
                     </div>
 
                     <p className="media-description">{description}</p>
+
+                    {traktAccessToken && (
+                        <div className="trakt-actions">
+                            <button
+                                className={`btn-trakt ${inWatchlist ? 'in-watchlist' : ''}`}
+                                onClick={toggleWatchlist}
+                                disabled={checkingWatchlist}
+                            >
+                                {checkingWatchlist ? '...' : inWatchlist ? '✓ In Watchlist' : '+ Add to Watchlist'}
+                            </button>
+                            {isWatched && (
+                                <span className="watched-indicator">✓ Watched</span>
+                            )}
+                        </div>
+                    )}
 
                     <CastCarousel cast={cast} />
 
