@@ -9,28 +9,43 @@ const CastCarousel = ({ cast }) => {
             <h3>Cast</h3>
             <div className="cast-carousel">
                 {cast.map((member, index) => {
-                    // Handle both string and object formats
-                    const actor = typeof member === 'string' ? member : (member.name || member);
-                    const character = typeof member === 'object' ? (member.role || member.character) : null;
+                    let actorName = '';
+                    let character = '';
+                    let photoUrl = '';
 
-                    // For now, we'll use a placeholder image since Cinemeta doesn't provide actor photos
-                    // In the future, you could integrate with TMDB API for actor images
-                    const actorPhoto = typeof member === 'object' && member.photo
-                        ? member.photo
-                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(actor)}&size=200&background=random`;
+                    // Handle TMDB format (from enhanced cast)
+                    if (member.profile_path) {
+                        actorName = member.name || '';
+                        character = member.character || '';
+                        photoUrl = member.profile_path;
+                    }
+                    // Handle Cinemeta string format
+                    else if (typeof member === 'string') {
+                        actorName = member;
+                    }
+                    // Handle Cinemeta object format
+                    else if (typeof member === 'object') {
+                        actorName = member.name || '';
+                        character = member.role || member.character || '';
+                        photoUrl = member.image || member.photo || '';
+                    }
+
+                    // Generate placeholder if no photo
+                    const finalPhotoUrl = photoUrl ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(actorName)}&size=200&background=random&color=fff`;
 
                     return (
                         <div key={index} className="cast-card">
                             <div className="cast-photo-wrapper">
                                 <img
-                                    src={actorPhoto}
-                                    alt={actor}
+                                    src={finalPhotoUrl}
+                                    alt={actorName}
                                     className="cast-photo"
                                     loading="lazy"
                                 />
                             </div>
                             <div className="cast-info">
-                                <p className="actor-name">{actor}</p>
+                                <p className="actor-name">{actorName}</p>
                                 {character && <p className="character-name">{character}</p>}
                             </div>
                         </div>

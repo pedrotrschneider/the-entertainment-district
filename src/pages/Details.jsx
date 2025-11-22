@@ -5,15 +5,19 @@ import torrentio from '../services/torrentio';
 import realdebrid from '../services/realdebrid';
 import rdtclient from '../services/rdtclient';
 import trakt from '../services/trakt';
+import tmdb from '../services/tmdb';
 import useSettingsStore from '../store/settingsStore';
 import StreamList from '../components/StreamList';
 import CastCarousel from '../components/CastCarousel';
 import DownloadOptionsModal from '../components/DownloadOptionsModal';
+import { DetailsSkeleton } from '../components/LoadingSkeleton';
+import { useToast } from '../components/Toast';
 import './Details.css';
 
 const Details = () => {
     const { type, id } = useParams();
     const navigate = useNavigate();
+    const toast = useToast();
     const [meta, setMeta] = useState(null);
     const [loading, setLoading] = useState(true);
     const [streams, setStreams] = useState([]);
@@ -38,11 +42,23 @@ const Details = () => {
     const [isWatched, setIsWatched] = useState(false);
     const [checkingWatched, setCheckingWatched] = useState(false);
 
+    // Enhanced cast from TMDB
+    const [enhancedCast, setEnhancedCast] = useState([]);
+
     useEffect(() => {
         const fetchMeta = async () => {
             setLoading(true);
             const data = await cinemeta.getMeta(type, id);
             setMeta(data);
+
+            // Fetch enhanced cast from TMDB
+            try {
+                const castData = await tmdb.getCastByImdb(id, type);
+                setEnhancedCast(castData);
+            } catch (error) {
+                console.error('Failed to fetch TMDB cast:', error);
+            }
+
             setLoading(false);
         };
 
@@ -95,7 +111,7 @@ const Details = () => {
             if (action === 'debrid') {
                 const added = await realdebrid.addMagnet(magnetLink);
                 await realdebrid.selectFiles(added.id, 'all');
-                alert('Added to Real-Debrid!');
+                toast.success('Added to Real-Debrid!');
             } else if (action === 'watch') {
                 setStatusMessage('Adding to Debrid...');
                 const added = await realdebrid.addMagnet(magnetLink);
@@ -124,12 +140,12 @@ const Details = () => {
                         window.open(unrestricted.download, '_blank');
                     }
                 } else {
-                    alert('No links found in torrent.');
+                    toast.warning('No links found in torrent.');
                 }
             }
         } catch (error) {
             console.error('Action failed:', error);
-            alert(`Action failed: ${error.message}`);
+            toast.error(`Action failed: ${error.message}`);
         } finally {
             setProcessing(false);
             setStatusMessage('');
@@ -148,10 +164,10 @@ const Details = () => {
                 pendingDownload.mediaType,
                 options
             );
-            alert('Added to Home Server!');
+            toast.success('Added to Home Server!');
         } catch (error) {
             console.error('Download failed:', error);
-            alert(`Download failed: ${error.message}`);
+            toast.error(`Download failed: ${error.message}`);
         } finally {
             setProcessing(false);
             setStatusMessage('');
@@ -198,7 +214,7 @@ const Details = () => {
 
     const toggleWatchlist = async () => {
         if (!traktAccessToken) {
-            alert('Please connect to Trakt in Settings first');
+            toast.warning('Please connect to Trakt in Settings first');
             return;
         }
 
@@ -210,26 +226,26 @@ const Details = () => {
             if (inWatchlist) {
                 await trakt.removeFromWatchlist(item);
                 setInWatchlist(false);
-                alert('Removed from watchlist');
+                toast.success('Removed from watchlist');
             } else {
                 await trakt.addToWatchlist(item);
                 setInWatchlist(true);
-                alert('Added to watchlist!');
+                toast.success('Added to watchlist!');
             }
         } catch (error) {
             console.error('Watchlist toggle failed:', error);
-            alert(`Failed to update watchlist: ${error.message}`);
+            toast.error(`Failed to update watchlist: ${error.message}`);
         }
     };
 
     const markAsWatched = async () => {
         if (!traktAccessToken) {
-            alert('Please connect to Trakt in Settings first');
+            toast.warning('Please connect to Trakt in Settings first');
             return;
         }
 
         if (isWatched) {
-            alert('Already marked as watched');
+            toast.info('Already marked as watched');
             return;
         }
 
@@ -240,10 +256,10 @@ const Details = () => {
 
             await trakt.addToHistory(item);
             setIsWatched(true); // Update state
-            alert('Marked as watched!');
+            toast.success('Marked as watched!');
         } catch (error) {
             console.error('Mark as watched failed:', error);
-            alert(`Failed to mark as watched: ${error.message}`);
+            toast.error(`Failed to mark as watched: ${error.message}`);
         }
     };
 
@@ -256,7 +272,7 @@ const Details = () => {
     }, [meta, traktAccessToken, id]);
 
     if (loading) {
-        return <div className="loading">Loading details...</div>;
+        return <DetailsSkeleton />;
     }
 
     if (!meta) {
@@ -318,7 +334,7 @@ const Details = () => {
                         </div>
                     )}
 
-                    <CastCarousel cast={cast} />
+                    <CastCarousel cast={enhancedCast.length > 0 ? enhancedCast : cast} />
 
                     {type === 'series' && (
                         <div className="series-selector">

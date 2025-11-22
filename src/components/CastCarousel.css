@@ -1,5 +1,7 @@
 .cast-section {
     margin-top: var(--spacing-xl);
+    overflow: hidden;
+    /* Prevent carousel from expanding page */
 }
 
 .cast-section h3 {
@@ -15,6 +17,7 @@
     overflow-y: hidden;
     padding-bottom: var(--spacing-sm);
     scroll-behavior: smooth;
+    width: 100%;
 
     /* Hide scrollbar for cleaner look, but keep functionality */
     scrollbar-width: thin;
@@ -41,11 +44,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
-    transition: transform 0.2s ease;
-}
-
-.cast-card:hover {
-    transform: translateY(-4px);
 }
 
 .cast-photo-wrapper {

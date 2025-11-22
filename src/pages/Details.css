@@ -45,6 +45,8 @@
 .details-info {
     flex: 1;
     text-align: center;
+    min-width: 0;
+    /* Critical for nested flex/grid scrolling */
 }
 
 .media-title {

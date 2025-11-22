@@ -12,7 +12,8 @@ const Settings = () => {
         rdtClientPassword, setRdtClientPassword,
         rdtClientMoviesPath, setRdtClientMoviesPath,
         rdtClientShowsPath, setRdtClientShowsPath,
-        traktClientId, setTraktClientId
+        traktClientId, setTraktClientId,
+        tmdbApiKey, setTmdbApiKey
     } = useSettingsStore();
 
     const [rdKey, setRdKey] = useState('');
@@ -22,11 +23,13 @@ const Settings = () => {
     const [rdtMoviesPath, setRdtMoviesPath] = useState('');
     const [rdtShowsPath, setRdtShowsPath] = useState('');
     const [traktId, setTraktId] = useState('');
+    const [tmdbKey, setTmdbKey] = useState('');
     const [saved, setSaved] = useState(false);
 
     // Password visibility toggles
     const [showRdKey, setShowRdKey] = useState(false);
     const [showRdtPass, setShowRdtPass] = useState(false);
+    const [showTmdbKey, setShowTmdbKey] = useState(false);
 
     useEffect(() => {
         setRdKey(realDebridApiKey);
@@ -36,7 +39,8 @@ const Settings = () => {
         setRdtMoviesPath(rdtClientMoviesPath);
         setRdtShowsPath(rdtClientShowsPath);
         setTraktId(traktClientId);
-    }, [realDebridApiKey, rdtClientUrl, rdtClientUsername, rdtClientPassword, rdtClientMoviesPath, rdtClientShowsPath, traktClientId]);
+        setTmdbKey(tmdbApiKey);
+    }, [realDebridApiKey, rdtClientUrl, rdtClientUsername, rdtClientPassword, rdtClientMoviesPath, rdtClientShowsPath, traktClientId, tmdbApiKey]);
 
     const handleSave = (e) => {
         e.preventDefault();
@@ -47,6 +51,7 @@ const Settings = () => {
         setRdtClientMoviesPath(rdtMoviesPath);
         setRdtClientShowsPath(rdtShowsPath);
         setTraktClientId(traktId);
+        setTmdbApiKey(tmdbKey);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
     };
@@ -147,6 +152,41 @@ const Settings = () => {
                         placeholder="TV Shows"
                     />
                     <small>Folder/category for TV show downloads.</small>
+                </div>
+
+                <h2 className="section-title">TMDB Integration</h2>
+                <p className="section-desc">
+                    Get cast photos and character names from The Movie Database.{' '}
+                    <a
+                        href="/TMDB_SETUP.md"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="setup-link"
+                    >
+                        Setup Instructions <ExternalLink size={14} />
+                    </a>
+                </p>
+
+                <div className="form-group">
+                    <label htmlFor="tmdbKey">TMDB API Key</label>
+                    <div className="password-input-wrapper">
+                        <input
+                            type={showTmdbKey ? "text" : "password"}
+                            id="tmdbKey"
+                            value={tmdbKey}
+                            onChange={(e) => setTmdbKey(e.target.value)}
+                            placeholder="Enter your TMDB API Key"
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password"
+                            onClick={() => setShowTmdbKey(!showTmdbKey)}
+                            aria-label="Toggle password visibility"
+                        >
+                            {showTmdbKey ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
+                    <small>Get this from themoviedb.org/settings/api (free account required).</small>
                 </div>
 
                 <h2 className="section-title">Trakt Integration</h2>

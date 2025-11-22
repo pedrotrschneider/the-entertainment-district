@@ -34,6 +34,10 @@ const useSettingsStore = create(
             traktAccountInfo: null,
             setTraktAccountInfo: (info) => set({ traktAccountInfo: info }),
 
+            // TMDB
+            tmdbApiKey: '',
+            setTmdbApiKey: (key) => set({ tmdbApiKey: key }),
+
             // Theme
             theme: 'dark',
             setTheme: (theme) => set({ theme: theme }),
