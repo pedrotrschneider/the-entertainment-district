@@ -22,6 +22,20 @@
     color: var(--color-text-secondary);
 }
 
+.search-input::placeholder {
+    color: var(--color-text-secondary);
+}
+
+.no-results {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--color-text-secondary);
+}
+
+.no-results p {
+    font-size: 1.125rem;
+}
+
 .search-input {
     width: 100%;
     padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) var(--spacing-xl);

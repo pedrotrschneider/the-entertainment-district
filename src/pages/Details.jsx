@@ -67,7 +67,7 @@ const Details = () => {
             const magnetLink = stream.url || `magnet:?xt=urn:btih:${stream.infoHash}`;
 
             if (action === 'download') {
-                await rdtclient.addTorrent(magnetLink);
+                await rdtclient.addTorrent(magnetLink, type);
                 alert('Added to Home Server!');
             } else if (action === 'debrid') {
                 const added = await realdebrid.addMagnet(magnetLink);

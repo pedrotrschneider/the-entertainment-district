@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useSettingsStore from '../store/settingsStore';
+import { Eye, EyeOff } from 'lucide-react';
 import './Settings.css';
 
 const Settings = () => {
@@ -8,7 +9,8 @@ const Settings = () => {
         rdtClientUrl, setRdtClientUrl,
         rdtClientUsername, setRdtClientUsername,
         rdtClientPassword, setRdtClientPassword,
-        rdtClientDownloadPath, setRdtClientDownloadPath,
+        rdtClientMoviesPath, setRdtClientMoviesPath,
+        rdtClientShowsPath, setRdtClientShowsPath,
         traktClientId, setTraktClientId
     } = useSettingsStore();
 
@@ -16,18 +18,24 @@ const Settings = () => {
     const [rdtUrl, setRdtUrl] = useState('');
     const [rdtUser, setRdtUser] = useState('');
     const [rdtPass, setRdtPass] = useState('');
-    const [rdtPath, setRdtPath] = useState('');
+    const [rdtMoviesPath, setRdtMoviesPath] = useState('');
+    const [rdtShowsPath, setRdtShowsPath] = useState('');
     const [traktId, setTraktId] = useState('');
     const [saved, setSaved] = useState(false);
+
+    // Password visibility toggles
+    const [showRdKey, setShowRdKey] = useState(false);
+    const [showRdtPass, setShowRdtPass] = useState(false);
 
     useEffect(() => {
         setRdKey(realDebridApiKey);
         setRdtUrl(rdtClientUrl);
         setRdtUser(rdtClientUsername);
         setRdtPass(rdtClientPassword);
-        setRdtPath(rdtClientDownloadPath);
+        setRdtMoviesPath(rdtClientMoviesPath);
+        setRdtShowsPath(rdtClientShowsPath);
         setTraktId(traktClientId);
-    }, [realDebridApiKey, rdtClientUrl, rdtClientUsername, rdtClientPassword, rdtClientDownloadPath, traktClientId]);
+    }, [realDebridApiKey, rdtClientUrl, rdtClientUsername, rdtClientPassword, rdtClientMoviesPath, rdtClientShowsPath, traktClientId]);
 
     const handleSave = (e) => {
         e.preventDefault();
@@ -35,7 +43,8 @@ const Settings = () => {
         setRdtClientUrl(rdtUrl);
         setRdtClientUsername(rdtUser);
         setRdtClientPassword(rdtPass);
-        setRdtClientDownloadPath(rdtPath);
+        setRdtClientMoviesPath(rdtMoviesPath);
+        setRdtClientShowsPath(rdtShowsPath);
         setTraktClientId(traktId);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
@@ -49,13 +58,23 @@ const Settings = () => {
             <form onSubmit={handleSave} className="settings-form">
                 <div className="form-group">
                     <label htmlFor="rdKey">Real-Debrid API Key</label>
-                    <input
-                        type="password"
-                        id="rdKey"
-                        value={rdKey}
-                        onChange={(e) => setRdKey(e.target.value)}
-                        placeholder="Enter your Real-Debrid API Key"
-                    />
+                    <div className="password-input-wrapper">
+                        <input
+                            type={showRdKey ? "text" : "password"}
+                            id="rdKey"
+                            value={rdKey}
+                            onChange={(e) => setRdKey(e.target.value)}
+                            placeholder="Enter your Real-Debrid API Key"
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password"
+                            onClick={() => setShowRdKey(!showRdKey)}
+                            aria-label="Toggle password visibility"
+                        >
+                            {showRdKey ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                     <small>You can find this in your Real-Debrid account settings.</small>
                 </div>
 
@@ -85,26 +104,48 @@ const Settings = () => {
 
                 <div className="form-group">
                     <label htmlFor="rdtPass">RDT Client Password</label>
-                    <input
-                        type="password"
-                        id="rdtPass"
-                        value={rdtPass}
-                        onChange={(e) => setRdtPass(e.target.value)}
-                        placeholder="Enter your RDT Client password"
-                    />
+                    <div className="password-input-wrapper">
+                        <input
+                            type={showRdtPass ? "text" : "password"}
+                            id="rdtPass"
+                            value={rdtPass}
+                            onChange={(e) => setRdtPass(e.target.value)}
+                            placeholder="Enter your RDT Client password"
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password"
+                            onClick={() => setShowRdtPass(!showRdtPass)}
+                            aria-label="Toggle password visibility"
+                        >
+                            {showRdtPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                     <small>Your RDT Client login password.</small>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="rdtPath">RDT Client Download Category</label>
+                    <label htmlFor="rdtMoviesPath">Movies Download Folder</label>
                     <input
                         type="text"
-                        id="rdtPath"
-                        value={rdtPath}
-                        onChange={(e) => setRdtPath(e.target.value)}
-                        placeholder="TED"
+                        id="rdtMoviesPath"
+                        value={rdtMoviesPath}
+                        onChange={(e) => setRdtMoviesPath(e.target.value)}
+                        placeholder="Movies"
                     />
-                    <small>Category for downloads (e.g., "Movies", "TV Shows", or "TED").</small>
+                    <small>Folder/category for movie downloads.</small>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="rdtShowsPath">TV Shows Download Folder</label>
+                    <input
+                        type="text"
+                        id="rdtShowsPath"
+                        value={rdtShowsPath}
+                        onChange={(e) => setRdtShowsPath(e.target.value)}
+                        placeholder="TV Shows"
+                    />
+                    <small>Folder/category for TV show downloads.</small>
                 </div>
 
                 <div className="form-group">

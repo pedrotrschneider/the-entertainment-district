@@ -8,7 +8,8 @@ const useSettingsStore = create(
             rdtClientUrl: '',
             rdtClientUsername: '',
             rdtClientPassword: '',
-            rdtClientDownloadPath: '',
+            rdtClientMoviesPath: '',
+            rdtClientShowsPath: '',
             traktClientId: '',
             theme: 'dark', // 'dark' or 'light'
 
@@ -16,7 +17,8 @@ const useSettingsStore = create(
             setRdtClientUrl: (url) => set({ rdtClientUrl: url }),
             setRdtClientUsername: (username) => set({ rdtClientUsername: username }),
             setRdtClientPassword: (password) => set({ rdtClientPassword: password }),
-            setRdtClientDownloadPath: (path) => set({ rdtClientDownloadPath: path }),
+            setRdtClientMoviesPath: (path) => set({ rdtClientMoviesPath: path }),
+            setRdtClientShowsPath: (path) => set({ rdtClientShowsPath: path }),
             setTraktClientId: (id) => set({ traktClientId: id }),
             setTheme: (theme) => set({ theme }),
         }),

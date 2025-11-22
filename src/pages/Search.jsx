@@ -8,26 +8,27 @@ import './Search.css';
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
-    const [results, setResults] = useState([]);
+    const [movieResults, setMovieResults] = useState([]);
+    const [seriesResults, setSeriesResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState(query);
 
     useEffect(() => {
         const performSearch = async () => {
             if (!query) {
-                setResults([]);
+                setMovieResults([]);
+                setSeriesResults([]);
                 return;
             }
 
             setLoading(true);
-            const [movieResults, seriesResults] = await Promise.all([
+            const [movies, series] = await Promise.all([
                 cinemeta.search('movie', query),
                 cinemeta.search('series', query)
             ]);
 
-            // Combine and deduplicate if necessary, or show sections
-            // For now, let's combine them
-            setResults([...movieResults, ...seriesResults]);
+            setMovieResults(movies);
+            setSeriesResults(series);
             setLoading(false);
         };
 
@@ -60,10 +61,27 @@ const Search = () => {
             {loading ? (
                 <div className="loading">Searching...</div>
             ) : (
-                <MediaGrid
-                    title={query ? `Results for "${query}"` : 'Start searching'}
-                    items={results}
-                />
+                <>
+                    {movieResults.length > 0 && (
+                        <MediaGrid
+                            title="Movies"
+                            items={movieResults}
+                        />
+                    )}
+
+                    {seriesResults.length > 0 && (
+                        <MediaGrid
+                            title="TV Shows"
+                            items={seriesResults}
+                        />
+                    )}
+
+                    {!loading && query && movieResults.length === 0 && seriesResults.length === 0 && (
+                        <div className="no-results">
+                            <p>No results found for "{query}"</p>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

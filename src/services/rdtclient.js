@@ -12,8 +12,8 @@ const rdtclient = {
             // LOGIC SWITCH:
             // If Dev: Use empty string (browser resolves to localhost:3000/api...) -> Hits Proxy
             // If Prod: Use the User's URL (http://192.../api...) -> Direct Request
-            const baseUrl = import.meta.env.DEV 
-                ? '' 
+            const baseUrl = import.meta.env.DEV
+                ? ''
                 : rdtClientUrl.replace(/\/$/, '');
 
             // Authenticate using form-urlencoded
@@ -39,17 +39,17 @@ const rdtclient = {
         }
     },
 
-    addTorrent: async (magnetLink) => {
+    addTorrent: async (magnetLink, mediaType = 'movie') => {
         try {
-            const { rdtClientUrl, rdtClientDownloadPath } = useSettingsStore.getState();
+            const { rdtClientUrl, rdtClientMoviesPath, rdtClientShowsPath } = useSettingsStore.getState();
 
             if (!rdtClientUrl) throw new Error('RDT Client URL not configured');
 
             // LOGIC SWITCH:
             // If Dev: Use empty string (browser resolves to localhost:3000/api...) -> Hits Proxy
             // If Prod: Use the User's URL (http://192.../api...) -> Direct Request
-            const baseUrl = import.meta.env.DEV 
-                ? '' 
+            const baseUrl = import.meta.env.DEV
+                ? ''
                 : rdtClientUrl.replace(/\/$/, '');
 
             // First authenticate to get session cookie
@@ -57,9 +57,14 @@ const rdtclient = {
 
             // Add torrent using form-urlencoded
             // The session cookie from auth will be automatically sent with withCredentials
+            // Auto-select folder based on media type
+            const category = mediaType === 'series'
+                ? (rdtClientShowsPath || 'TV Shows')
+                : (rdtClientMoviesPath || 'Movies');
+
             const formData = new URLSearchParams();
             formData.append('urls', magnetLink);
-            formData.append('category', rdtClientDownloadPath || 'TED');
+            formData.append('category', category);
 
             const response = await axios.post(
                 `${baseUrl}/api/v2/torrents/add`,
