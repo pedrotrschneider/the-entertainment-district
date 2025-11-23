@@ -3,15 +3,15 @@ version: '3.8'
 services:
   the-entertainment-district:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: the-entertainment-district
     ports:
       - "8080:80"
     restart: unless-stopped
     # Automatically read environment variables from .env file
     env_file:
-      - .env
+      - ../.env
     environment:
       # Additional runtime environment variables (optional)
       - NODE_ENV=production

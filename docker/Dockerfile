@@ -31,8 +31,8 @@ RUN npm ci --only=production
 # Copy built assets from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Copy server file
-COPY server.js ./
+# Copy server file from docker directory
+COPY docker/server.js ./
 
 # Expose port 80
 EXPOSE 80
