@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  the-entertainment-district:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pedrotrschneider/the-entertainment-district
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      # Add any runtime environment variables here if needed
+      - NODE_ENV=production
+    networks:
+      - ted-network
+
+networks:
+  ted-network:
+    driver: bridge
