@@ -92,8 +92,9 @@ app.use(express.static(path.join(__dirname, 'dist'), {
     },
 }));
 
-// SPA routing - all routes go to index.html
-app.get('*', (req, res) => {
+// SPA routing - all NON-API routes go to index.html
+// This must come AFTER API proxies and static files
+app.get(/^(?!\/api\/).*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
