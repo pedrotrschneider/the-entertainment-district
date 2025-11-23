@@ -1,0 +1,27 @@
+services:
+  the-entertainment-district:
+    image: pedrotrschneider/the-entertainment-district:latest
+    container_name: the-entertainment-district
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      # RDT Client Configuration (Required for proxying)
+      - VITE_RDT_CLIENT_URL=http://YOUR_RDT_CLIENT_IP:6500
+
+      # Real-Debrid API Key (Optional - can be set in browser)
+      - VITE_REAL_DEBRID_API_KEY=your_real_debrid_api_key
+
+      # RDT Client Credentials (Optional - can be set in browser)
+      - VITE_RDT_CLIENT_USERNAME=your_username
+      - VITE_RDT_CLIENT_PASSWORD=your_password
+
+      # RDT Client Download Paths (Optional - defaults shown)
+      - VITE_RDT_CLIENT_MOVIES_PATH=Movies
+      - VITE_RDT_CLIENT_SHOWS_PATH=TV Shows
+
+      # TMDB API Key (Optional - can be set in browser)
+      - VITE_TMDB_API_KEY=your_tmdb_api_key
+
+      # Trakt Client ID (Optional - can be set in browser)
+      - VITE_TRAKT_CLIENT_ID=your_trakt_client_id
