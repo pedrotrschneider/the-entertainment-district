@@ -46,6 +46,8 @@
 .stream-quality {
     font-weight: 700;
     color: var(--color-primary);
+    word-break: break-all;
+    overflow-wrap: anywhere;
 }
 
 .stream-meta {

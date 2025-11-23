@@ -13,6 +13,12 @@
     text-align: center;
 }
 
+@media (max-width: 768px) {
+    .footer {
+        display: none;
+    }
+}
+
 .footer-note {
     margin-top: var(--spacing-sm);
     font-size: 0.75rem;

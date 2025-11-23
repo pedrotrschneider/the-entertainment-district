@@ -182,11 +182,43 @@
 @media (max-width: 768px) {
 
     .col-size,
-    .col-speed {
+    .col-speed,
+    .col-files {
         display: none;
     }
 
     .col-name {
-        max-width: 150px;
+        width: 50%;
+        max-width: 0;
+    }
+
+    .col-progress {
+        width: 50%;
+        white-space: normal;
+    }
+
+    .progress-bar-container {
+        display: block;
+        width: 100%;
+        min-width: 80px;
+    }
+
+    .progress-text {
+        text-align: right;
+    }
+
+    .downloads-header {
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+    }
+
+    .downloads-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn-rdt {
+        width: 100%;
+        justify-content: center;
+        margin-top: var(--spacing-sm);
     }
 }

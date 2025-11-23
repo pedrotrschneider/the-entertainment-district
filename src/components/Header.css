@@ -55,7 +55,7 @@
 
 .nav-links {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 }
 
 .nav-item {
@@ -131,11 +131,21 @@
         display: none;
     }
 
-    .nav-links span {
+    .nav-links {
         display: none;
     }
 
     .header {
         padding: var(--spacing-md);
+    }
+
+    .header-content {
+        justify-content: center;
+        position: relative;
+    }
+
+    .theme-toggle {
+        position: absolute;
+        right: 0;
     }
 }

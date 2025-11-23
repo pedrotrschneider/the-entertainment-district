@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import BottomNav from './BottomNav';
 import useSettingsStore from '../store/settingsStore';
 import './Layout.css';
 
@@ -18,6 +19,7 @@ const Layout = ({ children }) => {
                 {children}
             </main>
             <Footer />
+            <BottomNav />
         </div>
     );
 };
