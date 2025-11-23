@@ -39,7 +39,8 @@
 }
 
 /* Ensure focus doesn't change color unless active */
-.bottom-nav-item:focus:not(.active) {
+.bottom-nav-item:focus:not(.active),
+.bottom-nav-item:hover:not(.active) {
     color: var(--color-text-secondary);
 }
 
