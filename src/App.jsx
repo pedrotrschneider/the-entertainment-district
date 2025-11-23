@@ -18,13 +18,17 @@ function AppContent() {
 
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      const backButtonListener = CapacitorApp.addListener('backButton', ({ canGoBack }) => {
         if (location.pathname === '/') {
           CapacitorApp.exitApp();
         } else {
           navigate(-1);
         }
       });
+
+      return () => {
+        backButtonListener.then(listener => listener.remove());
+      };
     }
   }, [navigate, location]);
 
