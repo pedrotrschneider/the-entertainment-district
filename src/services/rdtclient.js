@@ -9,13 +9,6 @@ const rdtclient = {
             if (!rdtClientUrl) throw new Error('RDT Client URL not configured');
             if (!rdtClientUsername || !rdtClientPassword) throw new Error('RDT Client credentials not configured');
 
-            // LOGIC SWITCH:
-            // If Dev: Use empty string (browser resolves to localhost:3000/api...) -> Hits Proxy
-            // If Prod: Use the User's URL (http://192.../api...) -> Direct Request
-            const baseUrl = import.meta.env.DEV
-                ? ''
-                : rdtClientUrl.replace(/\/$/, '');
-
             // Authenticate using JSON
             const payload = {
                 username: rdtClientUsername,
@@ -23,7 +16,7 @@ const rdtclient = {
             };
 
             const response = await axios.post(
-                `${baseUrl}/Api/Authentication/Login`,
+                `/Api/Authentication/Login`,
                 payload,
                 {
                     headers: {
@@ -45,9 +38,7 @@ const rdtclient = {
             const { rdtClientUrl } = useSettingsStore.getState();
             if (!rdtClientUrl) return false;
 
-            const baseUrl = import.meta.env.DEV ? '' : rdtClientUrl.replace(/\/$/, '');
-
-            await axios.get(`${baseUrl}/Api/Authentication/IsLoggedIn`, {
+            await axios.get(`/Api/Authentication/IsLoggedIn`, {
                 withCredentials: true
             });
             return true;
@@ -72,10 +63,6 @@ const rdtclient = {
 
             // Ensure we are logged in before proceeding
             await rdtclient.ensureLoggedIn();
-
-            const baseUrl = import.meta.env.DEV
-                ? ''
-                : rdtClientUrl.replace(/\/$/, '');
 
             // Auto-select folder based on media type, or use custom folder from options
             const category = options.folder || (mediaType === 'series'
@@ -104,7 +91,7 @@ const rdtclient = {
             };
 
             const response = await axios.post(
-                `${baseUrl}/Api/Torrents/UploadMagnet`,
+                `/Api/Torrents/UploadMagnet`,
                 payload,
                 {
                     headers: {
@@ -136,12 +123,8 @@ const rdtclient = {
             // Ensure we are logged in before proceeding
             await rdtclient.ensureLoggedIn();
 
-            const baseUrl = import.meta.env.DEV
-                ? ''
-                : rdtClientUrl.replace(/\/$/, '');
-
             const response = await axios.get(
-                `${baseUrl}/Api/Torrents`,
+                `/Api/Torrents`,
                 {
                     headers: {
                         'Content-Type': 'application/json'

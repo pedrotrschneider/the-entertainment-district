@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: pedrotrschneider/the-entertainment-district
+    container_name: the-entertainment-district
     ports:
       - "8080:80"
     restart: unless-stopped
