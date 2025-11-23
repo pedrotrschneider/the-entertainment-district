@@ -15,7 +15,7 @@ The key advantage of the new Node.js-based setup is that you can now configure t
 ```bash
 docker run -d \
   -p 80:80 \
-  -e RDT_CLIENT_URL=http://192.168.1.100:6500 \
+  -e VITE_RDT_CLIENT_URL=http://192.168.1.100:6500 \
   --name ted \
   ted-app
 ```
@@ -24,7 +24,7 @@ docker run -d \
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `RDT_CLIENT_URL` | URL to your RDT Client instance | `http://localhost:6500` |
+| `VITE_RDT_CLIENT_URL` | URL to your RDT Client instance | `http://localhost:6500` |
 | `PORT` | Port the server listens on | `80` |
 
 ## Examples
@@ -37,7 +37,7 @@ docker build -t ted-app .
 
 # Run with custom RDT Client URL
 docker run -p 8080:80 \
-  -e RDT_CLIENT_URL=http://192.168.1.50:6500 \
+  -e VITE_RDT_CLIENT_URL=http://192.168.1.50:6500 \
   ted-app
 ```
 
@@ -52,7 +52,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - RDT_CLIENT_URL=http://192.168.1.100:6500
+      - VITE_RDT_CLIENT_URL=http://192.168.1.100:6500
     restart: unless-stopped
 ```
 
@@ -67,7 +67,7 @@ docker stop ted
 # Start with new URL
 docker run -d \
   -p 80:80 \
-  -e RDT_CLIENT_URL=http://192.168.1.200:6500 \
+  -e VITE_RDT_CLIENT_URL=http://192.168.1.200:6500 \
   --name ted \
   ted-app
 ```

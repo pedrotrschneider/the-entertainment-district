@@ -4,7 +4,7 @@
 
 Your `.env` file contains configuration like:
 ```bash
-RDT_CLIENT_URL=http://192.168.1.100:6500
+VITE_RDT_CLIENT_URL=http://192.168.1.100:6500
 ```
 
 ## Deployment Options
@@ -33,7 +33,7 @@ docker run -d -p 80:80 --env-file .env --name ted ted-app
 
 ```bash
 docker run -d -p 80:80 \
-  -e RDT_CLIENT_URL=http://192.168.1.100:6500 \
+  -e VITE_RDT_CLIENT_URL=http://192.168.1.100:6500 \
   --name ted \
   ted-app
 ```
@@ -53,7 +53,7 @@ docker run -d -p 80:80 \
 
 Check what environment variables are loaded:
 ```bash
-docker exec ted env | grep RDT_CLIENT_URL
+docker exec ted env | grep VITE_RDT_CLIENT_URL
 ```
 
 Or check the server logs:

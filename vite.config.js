@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         // RDT Client API - configurable via environment variable
         '/api/rdtclient': {
-          target: env.RDT_CLIENT_URL || 'http://localhost:6500',
+          target: env.VITE_RDT_CLIENT_URL || 'http://localhost:6500',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/rdtclient/, ''),

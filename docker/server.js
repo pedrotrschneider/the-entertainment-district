@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 80;
 
 // Read RDT Client URL from environment variable
-const RDT_CLIENT_URL = process.env.RDT_CLIENT_URL || 'http://localhost:6500';
+const RDT_CLIENT_URL = process.env.VITE_RDT_CLIENT_URL || 'http://localhost:6500';
 
 console.log('🚀 Starting server...');
 console.log(`📡 RDT Client URL: ${RDT_CLIENT_URL}`);
