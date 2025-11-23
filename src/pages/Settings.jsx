@@ -248,7 +248,7 @@ const Settings = () => {
                 <p className="section-desc">
                     Get cast photos and character names from The Movie Database.{' '}
                     <a
-                        href="/TMDB_SETUP.md"
+                        href="https://github.com/pedrotrschneider/the-entertainment-district/blob/main/docs/TMDB_SETUP.md"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="setup-link"
@@ -298,7 +298,7 @@ const Settings = () => {
                 <p className="section-desc">
                     Sync your watchlist and watch history with Trakt.tv.{' '}
                     <a
-                        href="/TRAKT_SETUP.md"
+                        href="https://github.com/pedrotrschneider/the-entertainment-district/blob/main/docs/TRAKT_SETUP.md"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="setup-link"
