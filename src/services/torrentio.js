@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = '/api/torrentio';
+const BASE_URL = import.meta.env.DEV ? '/api/torrentio' : 'https://torrentio.strem.fun';
 
 const torrentio = {
     getStreams: async (type, id) => {

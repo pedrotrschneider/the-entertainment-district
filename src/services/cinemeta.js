@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = '/api/cinemeta';
+const BASE_URL = import.meta.env.DEV ? '/api/cinemeta' : 'https://v3-cinemeta.strem.io';
 
 const cinemeta = {
     getTrendingMovies: async () => {
