@@ -15,8 +15,12 @@ const rdtclient = {
                 password: rdtClientPassword
             };
 
+            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            // Remove trailing slash if present to avoid double slashes
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
             const response = await axios.post(
-                `/api/rdtclient/Api/Authentication/Login`,
+                `${cleanBaseUrl}/Api/Authentication/Login`,
                 payload,
                 {
                     headers: {
@@ -38,7 +42,10 @@ const rdtclient = {
             const { rdtClientUrl } = useSettingsStore.getState();
             if (!rdtClientUrl) return false;
 
-            await axios.get(`/api/rdtclient/Api/Authentication/IsLoggedIn`, {
+            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
+            await axios.get(`${cleanBaseUrl}/Api/Authentication/IsLoggedIn`, {
                 withCredentials: true
             });
             return true;
@@ -90,8 +97,11 @@ const rdtclient = {
                 }
             };
 
+            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
             const response = await axios.post(
-                `/api/rdtclient/Api/Torrents/UploadMagnet`,
+                `${cleanBaseUrl}/Api/Torrents/UploadMagnet`,
                 payload,
                 {
                     headers: {
@@ -123,8 +133,11 @@ const rdtclient = {
             // Ensure we are logged in before proceeding
             await rdtclient.ensureLoggedIn();
 
+            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
             const response = await axios.get(
-                `/api/rdtclient/Api/Torrents`,
+                `${cleanBaseUrl}/Api/Torrents`,
                 {
                     headers: {
                         'Content-Type': 'application/json'

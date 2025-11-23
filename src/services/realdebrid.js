@@ -1,7 +1,7 @@
 import axios from 'axios';
 import useSettingsStore from '../store/settingsStore';
 
-const BASE_URL = '/api/realdebrid';
+const BASE_URL = import.meta.env.DEV ? '/api/realdebrid' : 'https://api.real-debrid.com/rest/1.0';
 
 const getHeaders = () => {
     const { realDebridApiKey } = useSettingsStore.getState();
