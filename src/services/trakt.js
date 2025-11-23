@@ -1,7 +1,7 @@
 import axios from 'axios';
 import useSettingsStore from '../store/settingsStore';
 
-const TRAKT_API_BASE = 'https://api.trakt.tv';
+const TRAKT_API_BASE = '/api/trakt';
 const TRAKT_API_VERSION = '2';
 
 const trakt = {

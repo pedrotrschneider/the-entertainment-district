@@ -9,8 +9,11 @@ services:
     ports:
       - "8080:80"
     restart: unless-stopped
+    # Automatically read environment variables from .env file
+    env_file:
+      - .env
     environment:
-      # Add any runtime environment variables here if needed
+      # Additional runtime environment variables (optional)
       - NODE_ENV=production
     networks:
       - ted-network

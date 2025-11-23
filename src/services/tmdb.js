@@ -1,8 +1,8 @@
 import axios from 'axios';
 import useSettingsStore from '../store/settingsStore';
 
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
+const TMDB_BASE_URL = '/api/tmdb';
+const TMDB_IMAGE_BASE = '/api/tmdb-images';
 
 const tmdb = {
     // Find TMDB ID from IMDb ID

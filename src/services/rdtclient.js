@@ -16,7 +16,7 @@ const rdtclient = {
             };
 
             const response = await axios.post(
-                `/Api/Authentication/Login`,
+                `/api/rdtclient/Api/Authentication/Login`,
                 payload,
                 {
                     headers: {
@@ -38,7 +38,7 @@ const rdtclient = {
             const { rdtClientUrl } = useSettingsStore.getState();
             if (!rdtClientUrl) return false;
 
-            await axios.get(`/Api/Authentication/IsLoggedIn`, {
+            await axios.get(`/api/rdtclient/Api/Authentication/IsLoggedIn`, {
                 withCredentials: true
             });
             return true;
@@ -91,7 +91,7 @@ const rdtclient = {
             };
 
             const response = await axios.post(
-                `/Api/Torrents/UploadMagnet`,
+                `/api/rdtclient/Api/Torrents/UploadMagnet`,
                 payload,
                 {
                     headers: {
@@ -124,7 +124,7 @@ const rdtclient = {
             await rdtclient.ensureLoggedIn();
 
             const response = await axios.get(
-                `/Api/Torrents`,
+                `/api/rdtclient/Api/Torrents`,
                 {
                     headers: {
                         'Content-Type': 'application/json'
