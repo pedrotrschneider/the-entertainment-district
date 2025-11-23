@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 import useSettingsStore from '../store/settingsStore';
 
 const rdtclient = {
@@ -15,7 +16,12 @@ const rdtclient = {
                 password: rdtClientPassword
             };
 
-            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            // Determine Base URL:
+            // - Native (Android/iOS): Use direct URL (handled by CapacitorHttp to bypass CORS)
+            // - Web (Docker/Dev): Use Proxy (/api/rdtclient) to handle CORS via server
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
+
             // Remove trailing slash if present to avoid double slashes
             const cleanBaseUrl = baseUrl.replace(/\/$/, '');
 
@@ -42,7 +48,8 @@ const rdtclient = {
             const { rdtClientUrl } = useSettingsStore.getState();
             if (!rdtClientUrl) return false;
 
-            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
             const cleanBaseUrl = baseUrl.replace(/\/$/, '');
 
             await axios.get(`${cleanBaseUrl}/Api/Authentication/IsLoggedIn`, {
@@ -97,7 +104,8 @@ const rdtclient = {
                 }
             };
 
-            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
             const cleanBaseUrl = baseUrl.replace(/\/$/, '');
 
             const response = await axios.post(
@@ -133,7 +141,8 @@ const rdtclient = {
             // Ensure we are logged in before proceeding
             await rdtclient.ensureLoggedIn();
 
-            const baseUrl = import.meta.env.DEV ? '/api/rdtclient' : rdtClientUrl;
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
             const cleanBaseUrl = baseUrl.replace(/\/$/, '');
 
             const response = await axios.get(
