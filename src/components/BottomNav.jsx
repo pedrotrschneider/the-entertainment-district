@@ -10,13 +10,13 @@ const BottomNav = () => {
 
     return (
         <nav className="bottom-nav">
-            <Link to="/" className={`bottom-nav-item bottom-nav-item-home ${isActive('/') ? 'active' : ''}`}>
-                <Home size={24} />
-                <span>Home</span>
-            </Link>
             <Link to="/search" className={`bottom-nav-item bottom-nav-item-search ${isActive('/search') ? 'active' : ''}`}>
                 <Search size={24} />
                 <span>Search</span>
+            </Link>
+            <Link to="/" className={`bottom-nav-item bottom-nav-item-home ${isActive('/') ? 'active' : ''}`}>
+                <Home size={24} />
+                <span>Home</span>
             </Link>
             <Link to="/discover" className={`bottom-nav-item bottom-nav-item-discover ${isActive('/discover') ? 'active' : ''}`}>
                 <Compass size={24} />
