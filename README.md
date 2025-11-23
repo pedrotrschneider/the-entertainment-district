@@ -78,3 +78,28 @@ See [Environment Configuration Guide](docs/SETTINGS_ENV_VARS.md) for full detail
 *   **Routing**: React Router DOM
 *   **Deployment**: Docker + Node.js Express Server
 
+## Mobile App (Android)
+
+TED can be built as a native Android app using Capacitor.
+
+### Building APK
+
+1.  Sync the project:
+    ```bash
+    npx cap sync android
+    ```
+
+2.  Build the APK:
+    ```bash
+    cd android
+    ./gradlew assembleDebug
+    ```
+
+The APK will be located at `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+### GitHub Actions
+
+The repository includes a workflow (`.github/workflows/android-build.yml`) that automatically builds the APK on every push to `main`. You can download the built APK from the "Actions" tab in GitHub.
+
+See [Android Build Guide](docs/ANDROID_BUILD.md) for more details.
+

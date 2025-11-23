@@ -2,6 +2,7 @@
     background-color: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
     padding: var(--spacing-md) var(--spacing-lg);
+    padding-top: calc(var(--spacing-md) + env(safe-area-inset-top));
     position: sticky;
     top: 0;
     z-index: 100;
@@ -55,7 +56,7 @@
 
 .nav-links {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 }
 
 .nav-item {
@@ -131,11 +132,22 @@
         display: none;
     }
 
-    .nav-links span {
+    .nav-links {
         display: none;
     }
 
     .header {
         padding: var(--spacing-md);
+        padding-top: calc(var(--spacing-md) + env(safe-area-inset-top));
+    }
+
+    .header-content {
+        justify-content: center;
+        position: relative;
+    }
+
+    .theme-toggle {
+        position: absolute;
+        right: 0;
     }
 }

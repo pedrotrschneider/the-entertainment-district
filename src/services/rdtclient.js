@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 import useSettingsStore from '../store/settingsStore';
 
 const rdtclient = {
@@ -15,8 +16,17 @@ const rdtclient = {
                 password: rdtClientPassword
             };
 
+            // Determine Base URL:
+            // - Native (Android/iOS): Use direct URL (handled by CapacitorHttp to bypass CORS)
+            // - Web (Docker/Dev): Use Proxy (/api/rdtclient) to handle CORS via server
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
+
+            // Remove trailing slash if present to avoid double slashes
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
             const response = await axios.post(
-                `/api/rdtclient/Api/Authentication/Login`,
+                `${cleanBaseUrl}/Api/Authentication/Login`,
                 payload,
                 {
                     headers: {
@@ -38,7 +48,11 @@ const rdtclient = {
             const { rdtClientUrl } = useSettingsStore.getState();
             if (!rdtClientUrl) return false;
 
-            await axios.get(`/api/rdtclient/Api/Authentication/IsLoggedIn`, {
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
+            await axios.get(`${cleanBaseUrl}/Api/Authentication/IsLoggedIn`, {
                 withCredentials: true
             });
             return true;
@@ -90,8 +104,12 @@ const rdtclient = {
                 }
             };
 
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
             const response = await axios.post(
-                `/api/rdtclient/Api/Torrents/UploadMagnet`,
+                `${cleanBaseUrl}/Api/Torrents/UploadMagnet`,
                 payload,
                 {
                     headers: {
@@ -123,8 +141,12 @@ const rdtclient = {
             // Ensure we are logged in before proceeding
             await rdtclient.ensureLoggedIn();
 
+            const isNative = Capacitor.isNativePlatform();
+            const baseUrl = isNative ? rdtClientUrl : '/api/rdtclient';
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
             const response = await axios.get(
-                `/api/rdtclient/Api/Torrents`,
+                `${cleanBaseUrl}/Api/Torrents`,
                 {
                     headers: {
                         'Content-Type': 'application/json'

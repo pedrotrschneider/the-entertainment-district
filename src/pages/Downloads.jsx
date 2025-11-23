@@ -92,11 +92,11 @@ const Downloads = () => {
                         <table className="downloads-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Size</th>
-                                    <th>Files</th>
-                                    <th>Progress</th>
-                                    <th>Speed</th>
+                                    <th className="col-name">Name</th>
+                                    <th className="col-size">Size</th>
+                                    <th className="col-files">Files</th>
+                                    <th className="col-progress">Progress</th>
+                                    <th className="col-speed">Speed</th>
                                 </tr>
                             </thead>
                             <tbody>

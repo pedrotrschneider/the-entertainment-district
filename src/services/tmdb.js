@@ -1,8 +1,10 @@
 import axios from 'axios';
 import useSettingsStore from '../store/settingsStore';
 
-const TMDB_BASE_URL = '/api/tmdb';
-const TMDB_IMAGE_BASE = '/api/tmdb-images';
+import { Capacitor } from '@capacitor/core';
+
+const TMDB_BASE_URL = Capacitor.isNativePlatform() ? 'https://api.themoviedb.org/3' : '/api/tmdb';
+const TMDB_IMAGE_BASE = Capacitor.isNativePlatform() ? 'https://image.tmdb.org/t/p' : '/api/tmdb-images';
 
 const tmdb = {
     // Find TMDB ID from IMDb ID

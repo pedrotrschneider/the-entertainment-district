@@ -73,11 +73,30 @@ app.use('/api/cinemeta', createProxyMiddleware({
 }));
 
 // Real-Debrid API
+// Real-Debrid API
 app.use('/api/realdebrid', createProxyMiddleware({
     ...proxyOptions,
     target: 'https://api.real-debrid.com/rest/1.0',
     pathRewrite: { '^/api/realdebrid': '' },
     secure: false,
+    onProxyReq: (proxyReq, req, res) => {
+        // Spoof headers to look like a legitimate request from Real-Debrid's own domain
+        // This bypasses 403 Forbidden (WAF) and 500 Internal Server Error (CSRF checks)
+        proxyReq.setHeader('Origin', 'https://real-debrid.com');
+        proxyReq.setHeader('Referer', 'https://real-debrid.com/');
+
+        // Strip browser-specific headers that might trigger WAF
+        proxyReq.removeHeader('Cookie');
+        proxyReq.removeHeader('Sec-Fetch-Dest');
+        proxyReq.removeHeader('Sec-Fetch-Mode');
+        proxyReq.removeHeader('Sec-Fetch-Site');
+        proxyReq.removeHeader('Sec-Fetch-User');
+        proxyReq.removeHeader('Pragma');
+        proxyReq.removeHeader('Cache-Control');
+
+        // Set a clean User-Agent
+        proxyReq.setHeader('User-Agent', 'TED-App/1.0');
+    },
 }));
 
 // Serve static files from dist directory
