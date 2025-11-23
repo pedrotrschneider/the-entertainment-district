@@ -1,5 +1,9 @@
 {
   "appId": "com.pedrotrschneider.ted",
   "appName": "The Entertainment District",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
 }
