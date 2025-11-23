@@ -1,7 +1,9 @@
 import axios from 'axios';
 import useSettingsStore from '../store/settingsStore';
 
-const TRAKT_API_BASE = import.meta.env.DEV ? '/api/trakt' : 'https://api.trakt.tv';
+import { Capacitor } from '@capacitor/core';
+
+const TRAKT_API_BASE = Capacitor.isNativePlatform() ? 'https://api.trakt.tv' : '/api/trakt';
 const TRAKT_API_VERSION = '2';
 
 const trakt = {

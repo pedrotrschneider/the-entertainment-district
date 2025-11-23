@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.DEV ? '/api/torrentio' : 'https://torrentio.strem.fun';
+import { Capacitor } from '@capacitor/core';
+
+const BASE_URL = Capacitor.isNativePlatform() ? 'https://torrentio.strem.fun' : '/api/torrentio';
 
 const torrentio = {
     getStreams: async (type, id) => {

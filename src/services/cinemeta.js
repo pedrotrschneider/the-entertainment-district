@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.DEV ? '/api/cinemeta' : 'https://v3-cinemeta.strem.io';
+import { Capacitor } from '@capacitor/core';
+
+const BASE_URL = Capacitor.isNativePlatform() ? 'https://v3-cinemeta.strem.io' : '/api/cinemeta';
 
 const cinemeta = {
     getTrendingMovies: async () => {
